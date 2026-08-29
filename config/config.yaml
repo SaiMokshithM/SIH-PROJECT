@@ -1,0 +1,239 @@
+# ============================================================
+# config.yaml — Main Configuration File
+# AI Video Analytics Engine for Border Surveillance
+# ============================================================
+#
+# BEGINNER NOTE:
+#   YAML is a simple text format for configuration.
+#   Indentation (spaces) is very important — use spaces, NOT tabs.
+#   Lines starting with # are comments (ignored by the program).
+# ============================================================
+
+# --- Application Settings ---
+app:
+  name: "Border AI Analytics Engine"
+  version: "1.0.0"
+  debug: false
+
+# --- AI Model Settings ---
+model:
+  # Path to the YOLO model weights file
+  # "yolov8n.pt" = nano (smallest, fastest, good for CPU)
+  # "yolov8s.pt" = small (slightly slower but more accurate)
+  # "yolov8m.pt" = medium (needs good GPU)
+  path: "yolov8n.pt"
+
+  # Minimum confidence to accept a detection (0.0 to 1.0)
+  # Lower = detects more objects but more false positives
+  # Higher = fewer detections but more reliable
+  confidence_threshold: 0.45
+
+  # IOU (Intersection over Union) threshold for removing duplicate detections
+  iou_threshold: 0.45
+
+  # Device: "auto" = use GPU if available, else CPU
+  # "cpu" = force CPU   |   "cuda" = force GPU
+  device: "auto"
+
+  # Object classes to detect (COCO dataset class names)
+  # Full list: https://docs.ultralytics.com/datasets/detect/coco/
+  detect_classes:
+    - "person"
+    - "car"
+    - "motorcycle"
+    - "bus"
+    - "truck"
+    - "bicycle"
+    # Animals (supported by YOLOv8 pretrained on COCO)
+    - "bird"
+    - "cat"
+    - "dog"
+    - "horse"
+    - "sheep"
+    - "cow"
+    - "elephant"
+    - "bear"
+    - "zebra"
+    - "giraffe"
+
+# --- Object Tracking Settings ---
+tracking:
+  enabled: true
+  # How many previous positions to remember per object
+  # More history = better movement analysis but more memory
+  history_length: 30
+  # Maximum frames an object can be "lost" before its ID is dropped
+  max_age: 30
+  # Minimum detections before a track is considered confirmed
+  min_hits: 3
+  # IOU threshold for matching detections to existing tracks
+  iou_threshold: 0.3
+
+# --- Movement Analysis Settings ---
+movement:
+  # Pixel displacement per frame thresholds
+  # These values depend on camera resolution and zoom level
+  # Adjust for your specific camera setup
+  stationary_threshold: 1.0    # Below this = STATIONARY
+  very_slow_threshold: 2.0     # Below this = VERY_SLOW
+  slow_threshold: 5.0          # Below this = SLOW
+  normal_threshold: 15.0       # Below this = NORMAL
+  # Above normal_threshold    = FAST
+  # Number of recent trajectory frames to smooth direction/speed
+  direction_smoothing_frames: 5
+
+# --- Movement Event Detection ---
+movement_events:
+  # Seconds an object must be STATIONARY before generating STATIONARY_OBJECT event
+  stationary_threshold_seconds: 30
+  # Seconds an object must be SLOW before generating SLOW_MOVEMENT_DETECTED event
+  slow_movement_seconds: 15
+  # Cooldown (seconds) between repeated FAST_MOVEMENT events for the same track
+  fast_movement_cooldown: 10
+
+# --- Loitering Detection ---
+loitering:
+  enabled: true
+  # Default: alert if object is in a zone for this many seconds
+  default_threshold_seconds: 30
+  # Re-alert every N seconds if the object is still in the zone (0 = no re-alert)
+  re_alert_seconds: 60
+  # Per-zone overrides are set in zones.yaml
+
+# --- Night Mode Detection ---
+night_mode:
+  enabled: true
+  # Time range for night mode (24-hour format)
+  start_time: "20:00"
+  end_time: "06:00"
+  # Alternatively use brightness estimation
+  brightness_detection: false
+  brightness_threshold: 80   # 0-255, below this = dark frame
+
+# --- Crowd Detection ---
+crowd:
+  enabled: true
+  # Alert if more than this many people are detected in a zone
+  default_person_threshold: 5
+
+# --- Abandoned Object Detection ---
+abandoned_object:
+  enabled: true
+  # Seconds an object must be stationary before raising alert
+  stationary_threshold_seconds: 60
+
+# --- Event Settings ---
+events:
+  # Minimum seconds between repeated alerts for the same event type + track ID
+  # Prevents flooding: e.g., 100 alerts for the same person in 10 seconds
+  cooldown_seconds: 10
+  # Maximum events to keep in memory at once
+  max_events_in_memory: 1000
+
+# --- Evidence Capture ---
+evidence:
+  save_images: true
+  save_video: false
+  base_dir: "data/evidence"
+  pre_event_seconds: 5
+  post_event_seconds: 10
+  jpeg_quality: 90
+
+# --- Output Settings ---
+output:
+  base_dir: "data/output"
+  write_jsonl: true
+  # Set false to stop per-track console spam (events still shown)
+  print_to_console: false
+
+# --- Performance Settings ---
+performance:
+  process_every_n_frames: 1
+  max_fps: 0
+  show_display: true
+  # 960 = good balance: shows detail without being too large
+  display_width: 960
+
+# --- Camera Health Monitoring ---
+camera_health:
+  enabled: true
+  timeout_seconds: 10
+  freeze_check_interval: 5
+
+# --- Face Detection ---
+face_detection:
+  enabled: true
+  scale_factor: 1.1
+  min_neighbors: 5
+  min_size: [30, 30]
+  # Save a cropped face image for every detection
+  save_face_images: true
+  # Save a full-frame context image with the face box drawn on it
+  save_context_images: true
+  # JPEG quality for saved face images (1-100)
+  jpeg_quality: 92
+  # Minimum seconds between saving face images for the same person
+  # (prevents saving hundreds of identical images)
+  cooldown_seconds: 15
+
+
+# --- ANPR (License Plate Recognition) ---
+anpr:
+  enabled: false            # Requires: pip install easyocr
+  min_confidence: 0.40
+  # How often to attempt OCR per vehicle (seconds between attempts)
+  cooldown_per_vehicle: 15
+
+# --- Weapon Detection ---
+weapon_detection:
+  enabled: false            # Requires specialized trained model
+  model_path: "models/weapon/weapon_detector.pt"
+  weapon_confidence_threshold: 0.60
+
+# --- Group Movement ---
+group:
+  enabled: true
+  minimum_size: 3           # Minimum people to form a group
+  distance_threshold: 80    # Pixels — max distance between group members
+  formation_seconds: 5      # Seconds before group event fires
+  re_alert_seconds: 60
+
+# --- Unusual Movement ---
+unusual_movement:
+  enabled: true
+  history_frames: 30
+  direction_change_frames: 5
+  speed_jump_factor: 3.0
+  back_forth_count: 4
+  zone_repeat_count: 3
+
+# --- Risk Engine ---
+risk_engine:
+  enabled: true
+  decay_seconds: 120        # Events older than this don't contribute to score
+  max_score: 100
+  # Optional custom weights (override defaults in risk_engine.py):
+  # weights:
+  #   RESTRICTED_ZONE_INTRUSION: 60
+
+# --- Evidence ---
+evidence:
+  save_images: true
+  save_video: false
+  base_dir: "data/evidence"
+  pre_event_seconds: 5
+  post_event_seconds: 10
+  jpeg_quality: 90
+
+# --- Logging ---
+logging:
+  level: "INFO"
+  log_to_file: true
+  log_file: "data/output/engine.log"
+  max_log_size_mb: 10
+  backup_count: 3
+
+# --- Privacy ---
+privacy:
+  blur_faces: false
+  # This system does NOT perform facial recognition or identification

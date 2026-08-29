@@ -1,0 +1,44 @@
+﻿# ============================================================
+# zones.yaml — 3-Tier Risk Zone Configuration (33% / 33% / 33%)
+# Auto-scales to any camera resolution (640x480, 720p, 1080p)
+# ============================================================
+
+zones:
+
+  # ── LOW RISK ZONE: Left 33% of frame (0% – 33%)
+  - id: zone_low
+    name: "Low Risk (0-33%)"
+    type: SAFE
+    enabled: true
+    camera_id: null
+    polygon:
+      - [0,   0]
+      - [213, 0]
+      - [213, 480]
+      - [0,   480]
+
+  # ── MEDIUM RISK ZONE: Middle 33% of frame (33% – 66%)
+  - id: zone_med
+    name: "Medium Risk (33-66%)"
+    type: MONITORING
+    enabled: true
+    camera_id: null
+    loitering_threshold_seconds: 10
+    polygon:
+      - [214, 0]
+      - [426, 0]
+      - [426, 480]
+      - [214, 480]
+
+  # ── HIGH RISK ZONE: Right 33% of frame (66% – 100%)
+  - id: zone_high
+    name: "High Risk (66-100%)"
+    type: RESTRICTED
+    enabled: true
+    camera_id: null
+    loitering_threshold_seconds: 3
+    polygon:
+      - [427, 0]
+      - [640, 0]
+      - [640, 480]
+      - [427, 480]

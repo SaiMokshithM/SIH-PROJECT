@@ -1,0 +1,24 @@
+﻿# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv/
+
+# Node / React
+frontend/node_modules/
+.npm
+dist/
+
+# Logs & temporary outputs
+*.log
+data/uploads/
+data/output/
+data/evidence/
+test_plate.jpg
+.DS_Store
+Thumbs.db

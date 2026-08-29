@@ -1,0 +1,55 @@
+# ============================================================
+# cameras.yaml — Camera + Virtual Line Configuration
+# ============================================================
+
+cameras:
+  - id: "camera_001"
+    name: "North Gate"
+    source: "data/test_videos/test.mp4"
+    location: "North Perimeter"
+    enabled: true
+    active_zones:
+      - "zone_001"
+      - "zone_002"
+
+  - id: "camera_002"
+    name: "East Sector"
+    source: "rtsp://admin:password@192.168.1.101:554/stream"
+    location: "East Perimeter"
+    enabled: false
+
+  - id: "camera_003"
+    name: "South Checkpoint"
+    source: "data/test_videos/test.mp4"
+    location: "South Gate"
+    enabled: false
+
+# ============================================================
+# VIRTUAL LINES — disabled by default for clean display
+# Set enabled: true to activate fence crossing detection
+# Adjust [x,y] points to match your camera view
+# ============================================================
+
+virtual_lines:
+
+  # Main gate boundary — vertical line at x=420 (right 1/3 of 640px frame)
+  - id: "line_001"
+    name: "Main Gate"
+    enabled: false         # Set true to enable fence detection
+    camera_id: null
+    direction: "BOTH"
+    color_bgr: [0, 255, 255]
+    points:
+      - [420, 30]
+      - [420, 450]
+
+  # Inner checkpoint line at x=180
+  - id: "line_002"
+    name: "Inner Checkpoint"
+    enabled: false          # Set true to enable
+    camera_id: null
+    direction: "BOTH"
+    color_bgr: [0, 140, 255]
+    points:
+      - [180, 30]
+      - [180, 450]
