@@ -1,3 +1,14 @@
+---
+title: Border Surveillance Command Center
+emoji: 🛡️
+colorFrom: blue
+colorTo: slate
+sdk: gradio
+app_file: app.py
+pinned: false
+license: mit
+---
+
 # AI-Based Intelligent Video Analytics Platform
 ## For Border Surveillance Using Existing CCTV Infrastructure
 
