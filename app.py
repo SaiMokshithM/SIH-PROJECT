@@ -3,6 +3,14 @@ app.py — Hugging Face Spaces entry point.
 =========================================
 Mounts FastAPI into Gradio so Hugging Face Spaces serves the application natively.
 """
+try:
+    import spaces
+    @spaces.GPU
+    def _hf_gpu_init():
+        return "GPU_INITIALIZED"
+except Exception:
+    pass
+
 import gradio as gr
 from api.server import app
 
@@ -19,6 +27,6 @@ with gr.Blocks(title="AI Border Surveillance Command Center") as demo:
 # Mount Gradio onto our FastAPI application
 app = gr.mount_gradio_app(app, demo, path="/gradio")
 
-# Launch Gradio using its native server (no port collision)
+# Launch Gradio using its native server
 if __name__ == "__main__":
     demo.launch()
