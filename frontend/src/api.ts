@@ -1,6 +1,9 @@
 // src/api.ts — REST API calls to the FastAPI backend
 
-const BASE = `http://${window.location.hostname}:${window.location.port || 8000}`;
+const port = window.location.port
+  ? `:${window.location.port}`
+  : (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? ':8000' : '');
+const BASE = `${window.location.protocol}//${window.location.hostname}${port}`;
 
 export async function fetchStatus() {
   const r = await fetch(`${BASE}/api/status`);

@@ -1,9 +1,14 @@
-﻿// src/useWebSocket.ts — WebSocket hook connecting to /ws
+// src/useWebSocket.ts — WebSocket hook connecting to /ws
 
 import { useEffect, useRef, useState, useCallback } from 'react';
 import type { WSMessage } from './types';
 
-const WS_URL = `ws://${window.location.hostname}:${window.location.port || 8000}/ws`;
+const isHttps = typeof window !== 'undefined' && window.location.protocol === 'https:';
+const wsProto = isHttps ? 'wss:' : 'ws:';
+const wsPort = typeof window !== 'undefined'
+  ? (window.location.port ? `:${window.location.port}` : (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' ? ':8000' : ''))
+  : ':8000';
+const WS_URL = `${wsProto}//${typeof window !== 'undefined' ? window.location.hostname : 'localhost'}${wsPort}/ws`;
 
 export type WSStatus = 'connecting' | 'connected' | 'disconnected' | 'error';
 
