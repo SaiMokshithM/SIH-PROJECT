@@ -9,7 +9,7 @@ interface Props {
 }
 
 export function AuthorityLoginModal({ isOpen, onClose, onSuccess }: Props) {
-  const [pin, setPin] = useState('9926');
+  const [pin, setPin] = useState('');
   const [username, setUsername] = useState('commander');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -18,6 +18,10 @@ export function AuthorityLoginModal({ isOpen, onClose, onSuccess }: Props) {
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    if (!pin.trim()) {
+      setError('Please enter your 4-digit security clearance PIN.');
+      return;
+    }
     setLoading(true);
     setError('');
     try {
@@ -144,7 +148,24 @@ export function AuthorityLoginModal({ isOpen, onClose, onSuccess }: Props) {
               }}
             />
             <div style={{ fontSize: 10, color: 'var(--text-dim)', marginTop: 4 }}>
-              Demo Quick-Pass PIN: <strong style={{ color: 'var(--accent-cyan)' }}>9926</strong>
+              Demo Quick-Pass PIN:{' '}
+              <button
+                type="button"
+                onClick={() => setPin('9926')}
+                style={{
+                  background: 'rgba(56, 182, 255, 0.15)',
+                  border: '1px solid rgba(56, 182, 255, 0.3)',
+                  color: 'var(--accent-cyan)',
+                  borderRadius: 4,
+                  padding: '1px 6px',
+                  fontSize: 10,
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  fontFamily: "'JetBrains Mono', monospace",
+                }}
+              >
+                9926 (Click to Fill)
+              </button>
             </div>
           </div>
 

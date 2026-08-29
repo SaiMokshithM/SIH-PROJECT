@@ -432,24 +432,20 @@ export default function App() {
   const [loadMsg, setLoadMsg] = useState('')
   const [error, setError] = useState('')
 
-  // Authority Portal state
-  const [authorityUser, setAuthorityUser] = useState<AuthorityUser | null>(() => {
-    try {
-      const saved = localStorage.getItem('authority_user')
-      return saved ? JSON.parse(saved) : null
-    } catch {
-      return null
-    }
-  })
+  // Authority Portal state - Always requires PIN clearance to access
+  const [authorityUser, setAuthorityUser] = useState<AuthorityUser | null>(null)
   const [showAuthModal, setShowAuthModal] = useState(false)
   const [viewMode, setViewMode] = useState<'operator' | 'authority'>('operator')
 
   const handleOpenAuthority = () => {
-    if (authorityUser) {
-      setViewMode('authority')
-    } else {
-      setShowAuthModal(true)
-    }
+    setShowAuthModal(true)
+  }
+
+  const handleExitAuthority = () => {
+    setAuthorityUser(null)
+    setViewMode('operator')
+    localStorage.removeItem('authority_user')
+    localStorage.removeItem('authority_token')
   }
 
   const handleImage = useCallback(async (file:File)=>{
@@ -493,7 +489,7 @@ export default function App() {
         user={authorityUser}
         msg={message}
         wsStatus={wsStatus}
-        onExit={() => setViewMode('operator')}
+        onExit={handleExitAuthority}
       />
     )
   }
