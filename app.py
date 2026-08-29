@@ -1,10 +1,8 @@
 """
 app.py — Hugging Face Spaces entry point.
 =========================================
-Mounts FastAPI and Gradio interface so Hugging Face Spaces serves the application seamlessly.
+Mounts FastAPI into Gradio so Hugging Face Spaces serves the application natively.
 """
-import os
-import uvicorn
 import gradio as gr
 from api.server import app
 
@@ -18,10 +16,9 @@ with gr.Blocks(title="AI Border Surveillance Command Center") as demo:
         <iframe src="/" allow="camera; microphone; autoplay"></iframe>
     """)
 
-# Mount Gradio app onto FastAPI app so Hugging Face supervisor detects Gradio
+# Mount Gradio onto our FastAPI application
 app = gr.mount_gradio_app(app, demo, path="/gradio")
 
+# Launch Gradio using its native server (no port collision)
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 7860))
-    print(f"[HF Space] Launching on port {port}...")
-    uvicorn.run(app, host="0.0.0.0", port=port)
+    demo.launch()
