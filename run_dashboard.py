@@ -11,8 +11,16 @@ Usage:
 
 import argparse
 import sys
+import platform
+import asyncio
 import uvicorn
 from pathlib import Path
+
+if platform.system() == "Windows":
+    try:
+        asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+    except Exception:
+        pass
 
 def main():
     parser = argparse.ArgumentParser(description="AI Border Surveillance Dashboard")

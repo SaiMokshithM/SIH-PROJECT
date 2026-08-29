@@ -127,7 +127,9 @@ async def websocket_endpoint(websocket: WebSocket):
     try:
         while True:
             await websocket.receive_text()  # Keep connection alive
-    except WebSocketDisconnect:
+    except Exception:
+        pass
+    finally:
         ws_clients.discard(websocket)
         print(f"[WS] Client disconnected. Total: {len(ws_clients)}")
 
@@ -136,21 +138,24 @@ async def websocket_endpoint(websocket: WebSocket):
 
 async def mjpeg_generator():
     """Yield annotated frames as MJPEG stream."""
-    while True:
-        await asyncio.sleep(0.033)  # ~30fps max
-        with state.lock:
-            jpeg = state.frame_jpeg
-        if jpeg is None:
-            # Send a black placeholder frame
-            blank = np.zeros((360, 640, 3), dtype=np.uint8)
-            cv2.putText(blank, "Waiting for camera...", (120, 180),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.8, (100, 100, 100), 2)
-            _, buf = cv2.imencode(".jpg", blank)
-            jpeg = buf.tobytes()
-        yield (
-            b"--frame\r\n"
-            b"Content-Type: image/jpeg\r\n\r\n" + jpeg + b"\r\n"
-        )
+    try:
+        while True:
+            await asyncio.sleep(0.033)  # ~30fps max
+            with state.lock:
+                jpeg = state.frame_jpeg
+            if jpeg is None:
+                # Send a black placeholder frame
+                blank = np.zeros((360, 640, 3), dtype=np.uint8)
+                cv2.putText(blank, "Waiting for camera...", (120, 180),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.8, (100, 100, 100), 2)
+                _, buf = cv2.imencode(".jpg", blank)
+                jpeg = buf.tobytes()
+            yield (
+                b"--frame\r\n"
+                b"Content-Type: image/jpeg\r\n\r\n" + jpeg + b"\r\n"
+            )
+    except Exception:
+        return
 
 
 @app.get("/api/stream")
