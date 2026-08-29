@@ -1,4 +1,4 @@
-﻿// src/types.ts — All TypeScript types matching the backend API
+// src/types.ts — All TypeScript types matching the backend API
 
 export interface Detection {
   track_id: number;
@@ -29,12 +29,84 @@ export interface AIEvent {
   zone_name: string | null;
   description: string;
   risk_score: number;
+  status?: 'NEW' | 'ACKNOWLEDGED' | 'INVESTIGATING' | 'RESOLVED';
+  evidence_path?: string | null;
+  acknowledged_by?: string | null;
+  acknowledged_at?: string | null;
+  resolved_by?: string | null;
+  resolved_at?: string | null;
+  resolution_notes?: string | null;
+  confidence?: number | null;
+  bbox?: [number, number, number, number] | null;
+}
+
+export interface Incident extends AIEvent {
+  status: 'NEW' | 'ACKNOWLEDGED' | 'INVESTIGATING' | 'RESOLVED';
+}
+
+export interface AuthorityUser {
+  token: string;
+  username: string;
+  name: string;
+  role: 'OPERATOR' | 'HIGHER_AUTHORITY' | 'AGENCY_ADMIN';
+  badge: string;
+  department: string;
+  issued_at: number;
+  expires_at: number;
+}
+
+export interface AuditLogEntry {
+  id: string;
+  timestamp: string;
+  action: string;
+  actor: string;
+  role: string;
+  target_id: string | null;
+  details: string;
+  ip_address: string;
+}
+
+export interface SystemHealthInfo {
+  system_status: 'OPERATIONAL' | 'DEGRADED' | 'OFFLINE';
+  uptime_seconds: number;
+  camera_status: string;
+  fps: number;
+  frame_number: number;
+  active_tracks: number;
+  session_events: number;
+  ws_connected_clients: number;
+  subsystems: {
+    yolo_detector: { status: string; model: string };
+    weapon_detector: { status: string };
+    anpr_engine: { status: string };
+    face_detector: { status: string };
+    risk_engine: { status: string; score: number; level: string };
+    zones_engine: { status: string; zones_loaded: number };
+  };
+}
+
+export interface EvidenceItem {
+  filename: string;
+  path: string;
+  size_bytes: number;
+  modified: string;
+}
+
+export interface CameraInfo {
+  id: string;
+  name: string;
+  location: string;
+  enabled: boolean;
+  status: 'online' | 'offline' | 'disabled';
+  source: string;
 }
 
 export interface Counts {
   person: number;
   vehicle: number;
   animal: number;
+  weapon?: number;
+  plate?: number;
   total: number;
   tracked: number;
 }

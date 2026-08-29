@@ -17,23 +17,27 @@ import yaml
 import asyncio
 import numpy as np
 from pathlib import Path
-from typing import Optional, Set
+import time
+from typing import Optional, Set, List
 from datetime import datetime
+from pydantic import BaseModel
 
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect, UploadFile, File, Form, HTTPException
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, UploadFile, File, Form, HTTPException, Header, Depends
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import HTMLResponse, StreamingResponse, JSONResponse
+from fastapi.responses import HTMLResponse, StreamingResponse, JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 
 project_root = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(project_root))
 
 from src.utils.config_loader import load_config
+from src.auth.auth_manager import AuthManager, get_current_authority, UserRole
+from src.audit.audit_logger import audit_logger
 from api.pipeline_runner import PipelineRunner, state
 
 # ── App setup ────────────────────────────────────────────────────────────────
 
-app = FastAPI(title="AI Border Surveillance API", version="1.0.0")
+app = FastAPI(title="AI Border Surveillance API & Authority Portal", version="2.0.0")
 
 app.add_middleware(
     CORSMiddleware,
@@ -46,16 +50,27 @@ app.add_middleware(
 runner: Optional[PipelineRunner] = None
 config: dict = {}
 cameras_config: dict = {}
+runner_start_time: float = time.time()
 
 # Connected WebSocket clients
 ws_clients: Set[WebSocket] = set()
+
+# Models
+class LoginRequest(BaseModel):
+    username: Optional[str] = "commander"
+    pin: Optional[str] = "9926"
+
+class IncidentActionRequest(BaseModel):
+    actor: Optional[str] = "Commander"
+    notes: Optional[str] = None
 
 
 # ── Startup ──────────────────────────────────────────────────────────────────
 
 @app.on_event("startup")
 async def startup():
-    global runner, config, cameras_config
+    global runner, config, cameras_config, runner_start_time
+    runner_start_time = time.time()
     config = load_config("config/config.yaml")
     try:
         with open("config/cameras.yaml", "r") as f:
@@ -146,6 +161,36 @@ async def video_stream():
     )
 
 
+# ── Authentication & Security Clearance ──────────────────────────────────────
+
+@app.post("/api/auth/login")
+async def auth_login(req: LoginRequest):
+    """Authenticate authority / operator using PIN or username."""
+    session = AuthManager.authenticate(req.username or "commander", req.pin)
+    if not session:
+        raise HTTPException(401, "Invalid security clearance PIN or credentials.")
+    audit_logger.log(
+        action="AUTHORITY_LOGIN",
+        actor=session["name"],
+        role=session["role"],
+        details=f"Security clearance established ({session['department']})"
+    )
+    return session
+
+
+@app.get("/api/auth/me")
+async def auth_me(authority: dict = Depends(get_current_authority)):
+    """Verify active security clearance token."""
+    return authority
+
+
+@app.post("/api/auth/logout")
+async def auth_logout(token: Optional[str] = Header(None)):
+    if token:
+        AuthManager.revoke_token(token)
+    return {"status": "logged_out"}
+
+
 # ── REST: Status & Config ─────────────────────────────────────────────────────
 
 @app.get("/api/status")
@@ -222,9 +267,146 @@ async def get_events(limit: int = 50):
             "zone_name": e.zone_name,
             "description": e.description,
             "risk_score": e.risk_score,
+            "status": e.status,
+            "evidence_path": e.evidence_path,
         }
         for e in evts
     ]
+
+
+# ── Incident Management ───────────────────────────────────────────────────────
+
+@app.get("/api/incidents")
+async def get_incidents(
+    limit: int = 100,
+    severity: Optional[str] = None,
+    status_filter: Optional[str] = None,
+    camera_id: Optional[str] = None,
+):
+    """Retrieve full incident dossiers with real state, newest first."""
+    with state.lock:
+        evts = list(reversed(state.recent_events))
+
+    results = []
+    for e in evts:
+        if severity and e.severity.upper() != severity.upper():
+            continue
+        if status_filter and e.status.upper() != status_filter.upper():
+            continue
+        if camera_id and e.camera_id != camera_id:
+            continue
+        results.append({
+            "event_id": e.event_id,
+            "event_type": e.event_type,
+            "severity": e.severity,
+            "camera_id": e.camera_id,
+            "timestamp": e.timestamp,
+            "track_id": e.track_id,
+            "object_type": e.object_type,
+            "zone_id": e.zone_id,
+            "zone_name": e.zone_name,
+            "description": e.description,
+            "risk_score": e.risk_score,
+            "status": e.status,
+            "evidence_path": e.evidence_path,
+            "acknowledged_by": e.acknowledged_by,
+            "acknowledged_at": e.acknowledged_at,
+            "resolved_by": e.resolved_by,
+            "resolved_at": e.resolved_at,
+            "resolution_notes": e.resolution_notes,
+            "confidence": e.confidence,
+            "bbox": e.bbox,
+        })
+        if len(results) >= limit:
+            break
+    return results
+
+
+@app.post("/api/incidents/{incident_id}/acknowledge")
+async def acknowledge_incident(incident_id: str, req: Optional[IncidentActionRequest] = None):
+    """Acknowledge an incident and log action to security audit."""
+    actor = req.actor if req and req.actor else "Commander"
+    if not runner:
+        raise HTTPException(500, "Pipeline runner not initialized")
+    updated = runner.update_incident(incident_id, "ACKNOWLEDGED", actor=actor)
+    if not updated:
+        raise HTTPException(404, f"Incident {incident_id} not found")
+    return {"status": "acknowledged", "incident_id": incident_id, "by": actor}
+
+
+@app.post("/api/incidents/{incident_id}/resolve")
+async def resolve_incident(incident_id: str, req: Optional[IncidentActionRequest] = None):
+    """Resolve an incident with notes and log to audit trail."""
+    actor = req.actor if req and req.actor else "Commander"
+    notes = req.notes if req and req.notes else "Threat verified and mitigated."
+    if not runner:
+        raise HTTPException(500, "Pipeline runner not initialized")
+    updated = runner.update_incident(incident_id, "RESOLVED", actor=actor, notes=notes)
+    if not updated:
+        raise HTTPException(404, f"Incident {incident_id} not found")
+    return {"status": "resolved", "incident_id": incident_id, "by": actor, "notes": notes}
+
+
+# ── Authority Diagnostics & Evidence ─────────────────────────────────────────
+
+@app.get("/api/authority/audit")
+async def get_audit_logs(limit: int = 50):
+    """Return chronological authority audit logs."""
+    return audit_logger.get_logs(limit=limit)
+
+
+@app.get("/api/authority/system-health")
+async def get_system_health():
+    """Return deep operational diagnostic telemetry."""
+    with state.lock:
+        confirmed_count = len([d for d in state.detections if d.is_confirmed])
+        return {
+            "system_status": "OPERATIONAL" if state.camera_status in ("online", "offline") else "DEGRADED",
+            "uptime_seconds": round(time.time() - runner_start_time, 1),
+            "camera_status": state.camera_status,
+            "fps": round(state.fps, 1),
+            "frame_number": state.frame_number,
+            "active_tracks": confirmed_count,
+            "session_events": state.event_count_session,
+            "ws_connected_clients": len(ws_clients),
+            "subsystems": {
+                "yolo_detector": {"status": "ACTIVE", "model": state.model_name},
+                "weapon_detector": {"status": "ACTIVE" if state.weapon_enabled else "OFFLINE"},
+                "anpr_engine": {"status": "ACTIVE" if state.anpr_enabled else "OFFLINE"},
+                "face_detector": {"status": "ACTIVE" if state.face_enabled else "OFFLINE"},
+                "risk_engine": {"status": "ACTIVE", "score": state.risk_score, "level": state.risk_level},
+                "zones_engine": {"status": "ACTIVE", "zones_loaded": state.zones_loaded},
+            }
+        }
+
+
+@app.get("/api/evidence-list")
+async def get_evidence_list(limit: int = 50):
+    """Return real evidence image files captured by the system."""
+    ev_dir = project_root / "data" / "evidence"
+    results = []
+    if ev_dir.exists():
+        for p in sorted(ev_dir.glob("**/*.jpg"), key=lambda x: x.stat().st_mtime, reverse=True)[:limit]:
+            results.append({
+                "filename": p.name,
+                "path": f"/api/evidence/{p.relative_to(project_root).as_posix()}",
+                "size_bytes": p.stat().st_size,
+                "modified": datetime.fromtimestamp(p.stat().st_mtime).isoformat(),
+            })
+    return results
+
+
+@app.get("/api/evidence/{file_path:path}")
+async def get_evidence_file(file_path: str):
+    """Serve real evidence images securely."""
+    clean_path = Path(file_path).name
+    # Search in data/evidence and data/output/faces
+    candidates = list(project_root.glob(f"data/evidence/**/{clean_path}")) + \
+                 list(project_root.glob(f"data/output/faces/**/{clean_path}")) + \
+                 list(project_root.glob(f"data/uploads/**/{clean_path}"))
+    if candidates and candidates[0].exists():
+        return FileResponse(candidates[0], media_type="image/jpeg")
+    raise HTTPException(404, "Evidence image not found on disk")
 
 
 @app.get("/api/zones")

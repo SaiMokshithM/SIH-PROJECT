@@ -62,4 +62,71 @@ export async function startVideoProcessing(file: File) {
   return r.json();
 }
 
+export async function loginAuthority(pin: string, username = 'commander') {
+  const r = await fetch(`${BASE}/api/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ pin, username }),
+  });
+  if (!r.ok) {
+    const err = await r.json().catch(() => ({ detail: 'Authentication failed' }));
+    throw new Error(err.detail || 'Authentication failed');
+  }
+  return r.json();
+}
+
+export async function fetchCurrentAuthority(token: string) {
+  const r = await fetch(`${BASE}/api/auth/me`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!r.ok) return null;
+  return r.json();
+}
+
+export async function fetchIncidents(params?: { severity?: string; status_filter?: string; camera_id?: string; limit?: number }) {
+  const q = new URLSearchParams();
+  if (params?.severity) q.set('severity', params.severity);
+  if (params?.status_filter) q.set('status_filter', params.status_filter);
+  if (params?.camera_id) q.set('camera_id', params.camera_id);
+  if (params?.limit) q.set('limit', String(params.limit));
+  const r = await fetch(`${BASE}/api/incidents?${q.toString()}`);
+  return r.json();
+}
+
+export async function acknowledgeIncident(eventId: string, actor = 'Commander') {
+  const r = await fetch(`${BASE}/api/incidents/${eventId}/acknowledge`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ actor }),
+  });
+  if (!r.ok) throw new Error('Failed to acknowledge incident');
+  return r.json();
+}
+
+export async function resolveIncident(eventId: string, actor = 'Commander', notes = 'Threat mitigated.') {
+  const r = await fetch(`${BASE}/api/incidents/${eventId}/resolve`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ actor, notes }),
+  });
+  if (!r.ok) throw new Error('Failed to resolve incident');
+  return r.json();
+}
+
+export async function fetchAuditLogs(limit = 50) {
+  const r = await fetch(`${BASE}/api/authority/audit?limit=${limit}`);
+  return r.json();
+}
+
+export async function fetchSystemHealth() {
+  const r = await fetch(`${BASE}/api/authority/system-health`);
+  return r.json();
+}
+
+export async function fetchEvidenceList(limit = 50) {
+  const r = await fetch(`${BASE}/api/evidence-list?limit=${limit}`);
+  return r.json();
+}
+
 export const STREAM_URL = `${BASE}/api/stream`;
+export const BASE_URL = BASE;

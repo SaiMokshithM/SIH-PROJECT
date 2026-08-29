@@ -90,6 +90,15 @@ class EventInfo:
     zone_name: Optional[str]
     description: str
     risk_score: int
+    status: str = "NEW"  # NEW, ACKNOWLEDGED, INVESTIGATING, RESOLVED
+    evidence_path: Optional[str] = None
+    acknowledged_by: Optional[str] = None
+    acknowledged_at: Optional[str] = None
+    resolved_by: Optional[str] = None
+    resolved_at: Optional[str] = None
+    resolution_notes: Optional[str] = None
+    confidence: Optional[float] = None
+    bbox: Optional[List[int]] = None
 
 
 @dataclass
@@ -118,7 +127,7 @@ class PipelineState:
         "person": 0, "vehicle": 0, "animal": 0, "total": 0, "tracked": 0
     })
 
-    # Events (rolling 50)
+    # Events (rolling 200)
     recent_events: List[EventInfo] = field(default_factory=list)
     event_count_session: int = 0
 
@@ -182,8 +191,17 @@ class PipelineState:
                         "zone_name": e.zone_name,
                         "description": e.description,
                         "risk_score": e.risk_score,
+                        "status": e.status,
+                        "evidence_path": e.evidence_path,
+                        "acknowledged_by": e.acknowledged_by,
+                        "acknowledged_at": e.acknowledged_at,
+                        "resolved_by": e.resolved_by,
+                        "resolved_at": e.resolved_at,
+                        "resolution_notes": e.resolution_notes,
+                        "confidence": e.confidence,
+                        "bbox": e.bbox,
                     }
-                    for e in self.recent_events[-20:]
+                    for e in self.recent_events[-50:]
                 ],
                 "module_status": {
                     "anpr": self.anpr_enabled,
@@ -303,6 +321,10 @@ class PipelineRunner:
             state.face_enabled = config.get("face_detection", {}).get("enabled", True)
 
         # Load all AI modules once
+        from src.evidence.evidence_manager import EvidenceManager
+        from src.audit.audit_logger import audit_logger
+        self.audit_logger = audit_logger
+        self.evidence_mgr = EvidenceManager(config)
         self.detector = Detector(model_cfg)
         self.tracker = Tracker(config.get("tracking", {}))
         self.movement_ana = MovementAnalyzer(config.get("movement", {}))
@@ -326,6 +348,45 @@ class PipelineRunner:
             state.zones_loaded = n_zones
 
         print(f"[Pipeline] Zones:{n_zones} Lines:{n_lines}")
+
+    def update_incident(
+        self,
+        event_id: str,
+        status: str,
+        actor: str = "Commander",
+        notes: Optional[str] = None,
+    ) -> Optional[EventInfo]:
+        """
+        Update incident status (NEW -> ACKNOWLEDGED -> RESOLVED) and record audit log.
+        """
+        updated_ev = None
+        now_str = datetime.now().isoformat()
+        with state.lock:
+            for ev in state.recent_events:
+                if ev.event_id == event_id:
+                    ev.status = status
+                    if status == "ACKNOWLEDGED":
+                        ev.acknowledged_by = actor
+                        ev.acknowledged_at = now_str
+                    elif status == "RESOLVED":
+                        ev.resolved_by = actor
+                        ev.resolved_at = now_str
+                        ev.resolution_notes = notes or "Incident resolved by authority"
+                    elif status == "INVESTIGATING":
+                        ev.acknowledged_by = actor
+                        ev.acknowledged_at = now_str
+                    updated_ev = ev
+                    break
+
+        if updated_ev:
+            self.audit_logger.log(
+                action=f"INCIDENT_{status}",
+                actor=actor,
+                role="HIGHER_AUTHORITY",
+                target_id=event_id,
+                details=f"Status set to {status}. Notes: {notes or 'N/A'}"
+            )
+        return updated_ev
 
     def load_model(self) -> bool:
         ok = self.detector.load()
@@ -741,6 +802,19 @@ class PipelineRunner:
             new_event_infos = []
             for evt in all_events:
                 sev_val = evt.severity.value if evt.severity else "INFO"
+                ev_url = None
+                if sev_val in ("MEDIUM", "HIGH", "CRITICAL"):
+                    try:
+                        saved_path = self.evidence_mgr.capture(frame, evt)
+                        if saved_path:
+                            try:
+                                rel = Path(saved_path).relative_to(project_root)
+                                ev_url = f"/api/evidence/{rel.as_posix()}"
+                            except Exception:
+                                ev_url = f"/api/evidence/{Path(saved_path).name}"
+                    except Exception:
+                        pass
+
                 new_event_infos.append(EventInfo(
                     event_id=evt.event_id,
                     event_type=evt.event_type.value if hasattr(evt.event_type, "value") else str(evt.event_type),
@@ -753,6 +827,10 @@ class PipelineRunner:
                     zone_name=evt.zone_name,
                     description=evt.description,
                     risk_score=evt.risk_score,
+                    status="NEW",
+                    evidence_path=ev_url,
+                    confidence=evt.confidence,
+                    bbox=evt.bbox,
                 ))
 
             jpeg = frame_to_jpeg(annotated, quality=60)

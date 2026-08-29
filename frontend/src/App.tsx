@@ -1,8 +1,9 @@
-// App.tsx — Premium AI Border Surveillance Command Center
 import { useState, useRef, useCallback, useEffect } from 'react'
 import { useWebSocket } from './useWebSocket'
 import { detectImage, startCamera, stopCamera, startVideoProcessing, STREAM_URL } from './api'
-import type { WSMessage, InputMode, ImageResult, Detection, AIEvent } from './types'
+import type { WSMessage, InputMode, ImageResult, Detection, AIEvent, AuthorityUser } from './types'
+import { AuthorityLoginModal } from './components/AuthorityLoginModal'
+import { AuthorityPortal } from './components/AuthorityPortal'
 
 const riskColor = (s: number) =>
   s >= 80 ? '#ff3b5c' : s >= 60 ? '#ff7043' : s >= 40 ? '#ffb444' : s >= 20 ? '#00ff88' : '#3d6080'
@@ -27,11 +28,21 @@ function LiveClock() {
   )
 }
 
-function Header({ msg, wsStatus, lastReceived }: { msg: WSMessage|null; wsStatus:string; lastReceived:Date|null }) {
+function Header({
+  msg,
+  wsStatus,
+  lastReceived,
+  onOpenAuthority,
+}: {
+  msg: WSMessage|null;
+  wsStatus:string;
+  lastReceived:Date|null;
+  onOpenAuthority: () => void;
+}) {
   const ok = wsStatus==='connected', cam = msg?.camera_status==='online'
   return (
     <header style={{ background:'linear-gradient(180deg,#030810 0%,#040c18 100%)', borderBottom:'1px solid rgba(56,182,255,0.15)',
-      padding:'0 28px', height:60, display:'flex', alignItems:'center', justifyContent:'space-between',
+      padding:'0 24px', height:60, display:'flex', alignItems:'center', justifyContent:'space-between',
       position:'sticky', top:0, zIndex:200, boxShadow:'0 1px 40px rgba(0,0,0,0.8)' }}>
       <div style={{ display:'flex', alignItems:'center', gap:14 }}>
         <div style={{ width:38,height:38,background:'linear-gradient(135deg,rgba(56,182,255,0.2),rgba(0,229,255,0.1))',
@@ -50,12 +61,13 @@ function Header({ msg, wsStatus, lastReceived }: { msg: WSMessage|null; wsStatus
           </div>
         )}
       </div>
+
       <div style={{ display:'flex', gap:1 }}>
         {([['SYSTEM',ok?'ONLINE':'OFFLINE',ok],['AI MODEL',msg?.model??'—',!!msg],
           ['CAMERA',cam?'ONLINE':'OFFLINE',cam],['FPS',msg?.fps?`${msg.fps}`:'—',(msg?.fps??0)>0],
           ['STATUS',msg?.processing?'ACTIVE':'IDLE',msg?.processing??false]] as [string,string,boolean][])
           .map(([label,val,isOk]) => (
-          <div key={label} style={{ display:'flex',flexDirection:'column',alignItems:'center',padding:'6px 14px',
+          <div key={label} style={{ display:'flex',flexDirection:'column',alignItems:'center',padding:'6px 12px',
             borderRight:'1px solid rgba(56,182,255,0.07)' }}>
             <span style={{ fontSize:8,letterSpacing:'0.15em',color:'var(--text-dim)',marginBottom:3,fontWeight:600 }}>{label}</span>
             <div style={{ display:'flex',alignItems:'center',gap:4 }}>
@@ -66,10 +78,34 @@ function Header({ msg, wsStatus, lastReceived }: { msg: WSMessage|null; wsStatus
           </div>
         ))}
       </div>
-      <div style={{ display:'flex',flexDirection:'column',alignItems:'flex-end',gap:2 }}>
-        <LiveClock/>
-        <div style={{ fontSize:9,color:'var(--text-dim)',letterSpacing:'0.1em' }}>
-          {lastReceived ? `UPDATED ${lastReceived.toLocaleTimeString()}` : 'AWAITING DATA'}
+
+      <div style={{ display:'flex', alignItems:'center', gap:16 }}>
+        <button
+          onClick={onOpenAuthority}
+          style={{
+            background: 'linear-gradient(135deg, rgba(255, 180, 68, 0.15), rgba(255, 59, 92, 0.12))',
+            border: '1px solid rgba(255, 180, 68, 0.45)',
+            color: '#ffb444',
+            borderRadius: 8,
+            padding: '6px 14px',
+            fontSize: 10,
+            fontWeight: 800,
+            letterSpacing: '0.1em',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 6,
+            boxShadow: '0 0 16px rgba(255, 180, 68, 0.15)',
+          }}
+        >
+          <span>🏛</span> HIGHER AUTHORITY PORTAL
+        </button>
+
+        <div style={{ display:'flex',flexDirection:'column',alignItems:'flex-end',gap:2 }}>
+          <LiveClock/>
+          <div style={{ fontSize:9,color:'var(--text-dim)',letterSpacing:'0.1em' }}>
+            {lastReceived ? `UPDATED ${lastReceived.toLocaleTimeString()}` : 'AWAITING DATA'}
+          </div>
         </div>
       </div>
     </header>
@@ -396,6 +432,26 @@ export default function App() {
   const [loadMsg, setLoadMsg] = useState('')
   const [error, setError] = useState('')
 
+  // Authority Portal state
+  const [authorityUser, setAuthorityUser] = useState<AuthorityUser | null>(() => {
+    try {
+      const saved = localStorage.getItem('authority_user')
+      return saved ? JSON.parse(saved) : null
+    } catch {
+      return null
+    }
+  })
+  const [showAuthModal, setShowAuthModal] = useState(false)
+  const [viewMode, setViewMode] = useState<'operator' | 'authority'>('operator')
+
+  const handleOpenAuthority = () => {
+    if (authorityUser) {
+      setViewMode('authority')
+    } else {
+      setShowAuthModal(true)
+    }
+  }
+
   const handleImage = useCallback(async (file:File)=>{
     setLoading(true);setLoadMsg(`Running YOLO on ${file.name}...`);setError('');setImageResult(null)
     try { setImageResult(await detectImage(file)) } catch(e:any){ setError(e.message) }
@@ -431,9 +487,33 @@ export default function App() {
     </div>
   )
 
+  if (viewMode === 'authority' && authorityUser) {
+    return (
+      <AuthorityPortal
+        user={authorityUser}
+        msg={message}
+        wsStatus={wsStatus}
+        onExit={() => setViewMode('operator')}
+      />
+    )
+  }
+
   return (
     <div style={{ display:'flex',flexDirection:'column',height:'100vh',background:'var(--bg-void)',overflow:'hidden' }}>
-      <Header msg={message} wsStatus={wsStatus} lastReceived={lastReceived}/>
+      <Header
+        msg={message}
+        wsStatus={wsStatus}
+        lastReceived={lastReceived}
+        onOpenAuthority={handleOpenAuthority}
+      />
+      <AuthorityLoginModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        onSuccess={(u) => {
+          setAuthorityUser(u)
+          setViewMode('authority')
+        }}
+      />
 
       <div style={{ display:'flex',flex:1,overflow:'hidden' }}>
         <Sidebar activeTab={activeTab} setTab={setActiveTab}/>

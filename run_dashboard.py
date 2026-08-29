@@ -51,16 +51,19 @@ def main():
     if source is not None:
         import threading, time, requests
         def auto_start():
-            time.sleep(3)  # Wait for server to be ready
-            try:
-                requests.post(
-                    f"http://localhost:{args.port}/api/start-camera",
-                    data={"source": str(source), "camera_id": "camera_001"},
-                    timeout=5,
-                )
-                print(f"[Auto-start] Pipeline started with source: {source}")
-            except Exception as e:
-                print(f"[Auto-start] Failed: {e}")
+            for _ in range(8):
+                time.sleep(1.5)
+                try:
+                    r = requests.post(
+                        f"http://localhost:{args.port}/api/start-camera",
+                        data={"source": str(source), "camera_id": "camera_001"},
+                        timeout=5,
+                    )
+                    if r.status_code == 200:
+                        print(f"[Auto-start] Pipeline started with source: {source}")
+                        break
+                except Exception:
+                    pass
         threading.Thread(target=auto_start, daemon=True).start()
 
     uvicorn.run(
