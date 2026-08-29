@@ -6,7 +6,7 @@ import { AuthorityLoginModal } from './components/AuthorityLoginModal'
 import { AuthorityPortal } from './components/AuthorityPortal'
 
 const riskColor = (s: number) =>
-  s >= 80 ? '#ff3b5c' : s >= 60 ? '#ff7043' : s >= 40 ? '#ffb444' : s >= 20 ? '#00ff88' : '#3d6080'
+  s >= 80 ? '#EF4444' : s >= 60 ? '#F97316' : s >= 40 ? '#F59E0B' : s >= 20 ? '#10B981' : '#64748B'
 const riskLabel = (s: number) =>
   s >= 80 ? 'CRITICAL' : s >= 60 ? 'HIGH' : s >= 40 ? 'MEDIUM' : s >= 20 ? 'LOW' : 'INFO'
 const sevEmoji = (s: string) =>
@@ -22,7 +22,7 @@ function LiveClock() {
   const [t, setT] = useState(new Date())
   useEffect(() => { const id = setInterval(() => setT(new Date()), 1000); return () => clearInterval(id) }, [])
   return (
-    <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:13, color:'var(--accent-cyan)', letterSpacing:'0.12em' }}>
+    <span style={{ fontFamily:"'JetBrains Mono',monospace", fontSize:12, color:'var(--text-secondary)', letterSpacing:'0.08em', fontWeight: 600 }}>
       {t.toLocaleTimeString('en-GB', { hour12:false })}
     </span>
   )
@@ -41,69 +41,70 @@ function Header({
 }) {
   const ok = wsStatus==='connected', cam = msg?.camera_status==='online'
   return (
-    <header style={{ background:'linear-gradient(180deg,#030810 0%,#040c18 100%)', borderBottom:'1px solid rgba(56,182,255,0.15)',
-      padding:'0 24px', height:60, display:'flex', alignItems:'center', justifyContent:'space-between',
-      position:'sticky', top:0, zIndex:200, boxShadow:'0 1px 40px rgba(0,0,0,0.8)' }}>
-      <div style={{ display:'flex', alignItems:'center', gap:14 }}>
-        <div style={{ width:38,height:38,background:'linear-gradient(135deg,rgba(56,182,255,0.2),rgba(0,229,255,0.1))',
-          border:'1px solid rgba(56,182,255,0.3)',borderRadius:10,display:'flex',alignItems:'center',justifyContent:'center',
-          fontSize:18,boxShadow:'0 0 20px rgba(56,182,255,0.15)' }}>🛡</div>
+    <header style={{ background:'var(--bg-surface)', borderBottom:'1px solid var(--border)',
+      padding:'0 20px', height:56, display:'flex', alignItems:'center', justifyContent:'space-between',
+      position:'sticky', top:0, zIndex:200 }}>
+      <div style={{ display:'flex', alignItems:'center', gap:12 }}>
+        <div style={{ width:34,height:34,background:'var(--bg-card)',
+          border:'1px solid var(--border)',borderRadius:6,display:'flex',alignItems:'center',justifyContent:'center',
+          fontSize:16 }}>🛡</div>
         <div>
-          <div className="shimmer-text" style={{ fontSize:14, fontWeight:800, letterSpacing:'0.14em' }}>AI BORDER SURVEILLANCE</div>
-          <div style={{ fontSize:9, letterSpacing:'0.2em', color:'var(--text-muted)', fontWeight:500 }}>
-            COMMAND CENTER · SIH 2026 · REAL-TIME AI ANALYTICS
+          <div style={{ fontSize:13, fontWeight:800, letterSpacing:'0.06em', color: '#F8FAFC' }}>
+            BORDER SURVEILLANCE COMMAND CENTER
+          </div>
+          <div style={{ fontSize:9, letterSpacing:'0.08em', color:'var(--text-muted)', fontWeight:600 }}>
+            TACTICAL AI PERIMETER ANALYTICS · BSF / ITBP SPEC · SIH 2026
           </div>
         </div>
         {ok && (
-          <div style={{ display:'flex',alignItems:'center',gap:6,marginLeft:8,background:'rgba(0,255,136,0.08)',
-            border:'1px solid rgba(0,255,136,0.2)',borderRadius:99,padding:'4px 10px' }}>
-            <div className="dot-live"/><span style={{ fontSize:9,fontWeight:700,color:'#00ff88',letterSpacing:'0.15em' }}>LIVE</span>
+          <div style={{ display:'flex',alignItems:'center',gap:5,marginLeft:6,background:'rgba(16,185,129,0.1)',
+            border:'1px solid rgba(16,185,129,0.25)',borderRadius:4,padding:'3px 8px' }}>
+            <div className="dot-live"/><span style={{ fontSize:9,fontWeight:800,color:'#10B981',letterSpacing:'0.08em' }}>FEED LIVE</span>
           </div>
         )}
       </div>
 
-      <div style={{ display:'flex', gap:1 }}>
-        {([['SYSTEM',ok?'ONLINE':'OFFLINE',ok],['AI MODEL',msg?.model??'—',!!msg],
+      <div style={{ display:'flex', gap:2 }}>
+        {([['SYSTEM',ok?'ONLINE':'OFFLINE',ok],['MODEL',msg?.model??'YOLOv8',!!msg],
           ['CAMERA',cam?'ONLINE':'OFFLINE',cam],['FPS',msg?.fps?`${msg.fps}`:'—',(msg?.fps??0)>0],
-          ['STATUS',msg?.processing?'ACTIVE':'IDLE',msg?.processing??false]] as [string,string,boolean][])
+          ['PIPELINE',msg?.processing?'ACTIVE':'IDLE',msg?.processing??false]] as [string,string,boolean][])
           .map(([label,val,isOk]) => (
-          <div key={label} style={{ display:'flex',flexDirection:'column',alignItems:'center',padding:'6px 12px',
-            borderRight:'1px solid rgba(56,182,255,0.07)' }}>
-            <span style={{ fontSize:8,letterSpacing:'0.15em',color:'var(--text-dim)',marginBottom:3,fontWeight:600 }}>{label}</span>
+          <div key={label} style={{ display:'flex',flexDirection:'column',alignItems:'center',padding:'4px 10px',
+            borderRight:'1px solid var(--border)' }}>
+            <span style={{ fontSize:8,letterSpacing:'0.08em',color:'var(--text-dim)',marginBottom:2,fontWeight:700 }}>{label}</span>
             <div style={{ display:'flex',alignItems:'center',gap:4 }}>
               <div className={isOk?'dot-live':'dot-offline'} style={{ width:5,height:5 }}/>
-              <span style={{ fontSize:11,fontWeight:700,color:isOk?'var(--text-primary)':'var(--text-muted)',
+              <span style={{ fontSize:10,fontWeight:700,color:isOk?'var(--text-primary)':'var(--text-muted)',
                 fontFamily:"'JetBrains Mono',monospace" }}>{val}</span>
             </div>
           </div>
         ))}
       </div>
 
-      <div style={{ display:'flex', alignItems:'center', gap:16 }}>
+      <div style={{ display:'flex', alignItems:'center', gap:14 }}>
         <button
           onClick={onOpenAuthority}
           style={{
-            background: 'linear-gradient(135deg, rgba(255, 180, 68, 0.15), rgba(255, 59, 92, 0.12))',
-            border: '1px solid rgba(255, 180, 68, 0.45)',
-            color: '#ffb444',
-            borderRadius: 8,
-            padding: '6px 14px',
+            background: 'rgba(217, 119, 6, 0.12)',
+            border: '1px solid rgba(217, 119, 6, 0.4)',
+            color: '#FBBF24',
+            borderRadius: 6,
+            padding: '6px 12px',
             fontSize: 10,
             fontWeight: 800,
-            letterSpacing: '0.1em',
+            letterSpacing: '0.06em',
             cursor: 'pointer',
             display: 'flex',
             alignItems: 'center',
             gap: 6,
-            boxShadow: '0 0 16px rgba(255, 180, 68, 0.15)',
           }}
         >
           <span>🏛</span> HIGHER AUTHORITY PORTAL
         </button>
 
-        <div style={{ display:'flex',flexDirection:'column',alignItems:'flex-end',gap:2 }}>
+        <div style={{ display:'flex',flexDirection:'column',alignItems:'flex-end',gap:1 }}>
           <LiveClock/>
-          <div style={{ fontSize:9,color:'var(--text-dim)',letterSpacing:'0.1em' }}>
+          <div style={{ fontSize:9,color:'var(--text-dim)',letterSpacing:'0.06em' }}>
             {lastReceived ? `UPDATED ${lastReceived.toLocaleTimeString()}` : 'AWAITING DATA'}
           </div>
         </div>
@@ -113,21 +114,20 @@ function Header({
 }
 
 function Sidebar({ activeTab, setTab }: { activeTab:string; setTab:(t:string)=>void }) {
-  const items = [['dashboard','⚡','DASH'],['tracks','🔍','TRACKS'],['events','🚨','EVENTS'],['modules','⚙','MODS']]
+  const items = [['dashboard','⚡','DASH'],['tracks','🔍','TRACKS'],['events','🚨','EVENTS'],['modules','⚙','SUBSYS']]
   return (
-    <aside style={{ width:64,background:'linear-gradient(180deg,#030810,#040c18)',borderRight:'1px solid rgba(56,182,255,0.1)',
+    <aside style={{ width:60,background:'var(--bg-surface)',borderRight:'1px solid var(--border)',
       display:'flex',flexDirection:'column',alignItems:'center',padding:'12px 0',gap:4,flexShrink:0 }}>
       {items.map(([id,icon,label]) => {
         const a = activeTab===id
         return (
-          <button key={id} onClick={()=>setTab(id)} title={label} style={{ width:48,height:48,border:'none',cursor:'pointer',
-            borderRadius:10,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:2,
-            background:a?'rgba(56,182,255,0.12)':'transparent',
-            boxShadow:a?'0 0 16px rgba(56,182,255,0.1)':'none',
-            borderColor:a?'rgba(56,182,255,0.25)':'transparent', borderStyle:'solid', borderWidth:1,
-            transition:'all 0.2s',color:a?'var(--accent-blue)':'var(--text-muted)' }}>
-            <span style={{ fontSize:18 }}>{icon}</span>
-            <span style={{ fontSize:7,fontWeight:700,letterSpacing:'0.04em' }}>{label}</span>
+          <button key={id} onClick={()=>setTab(id)} title={label} style={{ width:44,height:44,border:'none',cursor:'pointer',
+            borderRadius:6,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:2,
+            background:a?'#1E293B':'transparent',
+            borderColor:a?'var(--border-light)':'transparent', borderStyle:'solid', borderWidth:1,
+            transition:'all 0.15s',color:a?'#3B82F6':'var(--text-muted)' }}>
+            <span style={{ fontSize:15 }}>{icon}</span>
+            <span style={{ fontSize:7,fontWeight:800,letterSpacing:'0.04em' }}>{label}</span>
           </button>
         )
       })}
@@ -137,17 +137,17 @@ function Sidebar({ activeTab, setTab }: { activeTab:string; setTab:(t:string)=>v
 
 function StatCard({ icon,label,value,color,sub }: { icon:string;label:string;value:number|null;color:string;sub?:string }) {
   return (
-    <div className="stat-card panel-glow" style={{ flex:1,minWidth:120 }}>
-      <div style={{ display:'flex',alignItems:'flex-start',justifyContent:'space-between',marginBottom:12 }}>
-        <div style={{ width:34,height:34,borderRadius:9,background:`${color}15`,border:`1px solid ${color}30`,
-          display:'flex',alignItems:'center',justifyContent:'center',fontSize:16 }}>{icon}</div>
-        <div style={{ width:5,height:5,borderRadius:'50%',background:color,boxShadow:`0 0 8px ${color}`,marginTop:3 }}/>
+    <div className="stat-card" style={{ flex:1,minWidth:110 }}>
+      <div style={{ display:'flex',alignItems:'flex-start',justifyContent:'space-between',marginBottom:8 }}>
+        <div style={{ width:28,height:28,borderRadius:6,background:`${color}15`,border:`1px solid ${color}30`,
+          display:'flex',alignItems:'center',justifyContent:'center',fontSize:13 }}>{icon}</div>
+        <div style={{ width:5,height:5,borderRadius:'50%',background:color,marginTop:3 }}/>
       </div>
-      <div style={{ fontSize:30,fontWeight:800,color,lineHeight:1,marginBottom:4,fontFamily:"'JetBrains Mono',monospace" }}>
-        {value===null ? <span style={{ fontSize:18,color:'var(--text-dim)',fontWeight:400 }}>—</span> : value}
+      <div style={{ fontSize:24,fontWeight:800,color,lineHeight:1,marginBottom:3,fontFamily:"'JetBrains Mono',monospace" }}>
+        {value===null ? <span style={{ fontSize:16,color:'var(--text-dim)',fontWeight:400 }}>—</span> : value}
       </div>
-      <div style={{ fontSize:9,fontWeight:700,letterSpacing:'0.14em',color:'var(--text-muted)',textTransform:'uppercase' }}>{label}</div>
-      {sub && <div style={{ fontSize:9,color,marginTop:3,opacity:0.8 }}>{sub}</div>}
+      <div style={{ fontSize:9,fontWeight:700,letterSpacing:'0.08em',color:'var(--text-muted)',textTransform:'uppercase' }}>{label}</div>
+      {sub && <div style={{ fontSize:9,color,marginTop:2,opacity:0.9 }}>{sub}</div>}
     </div>
   )
 }
@@ -155,22 +155,23 @@ function StatCard({ icon,label,value,color,sub }: { icon:string;label:string;val
 function RiskGauge({ score,level }: { score:number;level:string }) {
   const c = riskColor(score)
   return (
-    <div style={{ padding:'16px 18px 14px' }}>
-      <div style={{ display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:10 }}>
+    <div style={{ padding:'14px 16px' }}>
+      <div style={{ display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8 }}>
         <div>
-          <div style={{ fontSize:9,letterSpacing:'0.16em',color:'var(--text-muted)',fontWeight:600,marginBottom:2 }}>OPERATIONAL RISK</div>
-          <div style={{ fontSize:9,color:'var(--text-dim)' }}>Decaying weighted events per track</div>
+          <div style={{ fontSize:9,letterSpacing:'0.1em',color:'var(--text-muted)',fontWeight:700,marginBottom:2 }}>OPERATIONAL RISK LEVEL</div>
+          <div style={{ fontSize:9,color:'var(--text-dim)' }}>Calculated priority threat score</div>
         </div>
         <div style={{ textAlign:'right' }}>
-          <div style={{ fontSize:36,fontWeight:900,color:c,lineHeight:1,fontFamily:"'JetBrains Mono',monospace",
-            textShadow:`0 0 20px ${c}60` }}>{score}</div>
-          <div style={{ fontSize:10,fontWeight:800,color:c,letterSpacing:'0.12em' }}>{level}</div>
+          <div style={{ fontSize:28,fontWeight:900,color:c,lineHeight:1,fontFamily:"'JetBrains Mono',monospace" }}>{score}</div>
+          <div style={{ fontSize:9,fontWeight:800,color:c,letterSpacing:'0.08em' }}>{level}</div>
         </div>
       </div>
-      <div className="risk-track"><div className="risk-fill" style={{ width:`${Math.min(100,score)}%` }}/></div>
-      <div style={{ display:'flex',justifyContent:'space-between',marginTop:6,fontSize:8,color:'var(--text-dim)',fontWeight:600 }}>
-        <span>0</span><span style={{color:'#00ff88'}}>INFO</span><span style={{color:'#ffb444'}}>MED</span>
-        <span style={{color:'#ff7043'}}>HIGH</span><span style={{color:'#ff3b5c'}}>CRIT</span><span>100</span>
+      <div style={{ height:5, background:'rgba(255,255,255,0.06)', borderRadius:4, overflow:'hidden' }}>
+        <div style={{ height:'100%', width:`${Math.min(100,score)}%`, background:c, transition:'width 0.4s ease' }}/>
+      </div>
+      <div style={{ display:'flex',justifyContent:'space-between',marginTop:5,fontSize:8,color:'var(--text-dim)',fontWeight:700 }}>
+        <span>0</span><span style={{color:'#10B981'}}>LOW (20)</span><span style={{color:'#F59E0B'}}>MED (50)</span>
+        <span style={{color:'#EF4444'}}>CRIT (90)</span><span>100</span>
       </div>
     </div>
   )
@@ -179,51 +180,52 @@ function RiskGauge({ score,level }: { score:number;level:string }) {
 function LiveFeed({ msg,imageResult,mode }: { msg:WSMessage|null;imageResult:ImageResult|null;mode:InputMode }) {
   const live = msg?.camera_status==='online'
   if (mode==='image' && imageResult) return (
-    <div style={{ position:'relative',background:'#000',borderRadius:8,overflow:'hidden' }}>
+    <div style={{ position:'relative',background:'#000',borderRadius:6,overflow:'hidden' }}>
       <img src={imageResult.annotated_image} style={{ width:'100%',display:'block' }} alt="AI result"/>
       <div className="scanline-overlay"/>
-      <div style={{ position:'absolute',top:10,left:10,background:'rgba(0,229,255,0.12)',border:'1px solid rgba(0,229,255,0.3)',
-        backdropFilter:'blur(8px)',borderRadius:6,padding:'4px 12px',fontSize:10,fontWeight:700,
-        color:'var(--accent-cyan)',letterSpacing:'0.12em' }}>✓ YOLO PROCESSED</div>
+      <div style={{ position:'absolute',top:10,left:10,background:'rgba(15,23,42,0.85)',border:'1px solid var(--border-light)',
+        borderRadius:4,padding:'3px 10px',fontSize:9,fontWeight:700,color:'#93C5FD',letterSpacing:'0.08em' }}>
+        ✓ FORENSIC SCAN COMPLETE
+      </div>
     </div>
   )
   return (
-    <div style={{ position:'relative',background:'#000',borderRadius:8,overflow:'hidden',minHeight:300 }}>
+    <div style={{ position:'relative',background:'#000',borderRadius:6,overflow:'hidden',minHeight:300 }}>
       <img src={STREAM_URL} style={{ width:'100%',display:'block',minHeight:300,objectFit:'contain' }} alt="Live"/>
       <div className="scanline-overlay"/>
       {['tl','tr','bl','br'].map(c=>(
         <div key={c} style={{ position:'absolute',
-          top:c[0]==='t'?8:undefined,bottom:c[0]==='b'?8:undefined,
-          left:c[1]==='l'?8:undefined,right:c[1]==='r'?8:undefined,
-          width:18,height:18,
-          borderTop:c[0]==='t'?`2px solid ${live?'var(--accent-cyan)':'#ff3b5c'}`:undefined,
-          borderBottom:c[0]==='b'?`2px solid ${live?'var(--accent-cyan)':'#ff3b5c'}`:undefined,
-          borderLeft:c[1]==='l'?`2px solid ${live?'var(--accent-cyan)':'#ff3b5c'}`:undefined,
-          borderRight:c[1]==='r'?`2px solid ${live?'var(--accent-cyan)':'#ff3b5c'}`:undefined,
-          opacity:0.7 }}/>
+          top:c[0]==='t'?6:undefined,bottom:c[0]==='b'?6:undefined,
+          left:c[1]==='l'?6:undefined,right:c[1]==='r'?6:undefined,
+          width:14,height:14,
+          borderTop:c[0]==='t'?`1.5px solid ${live?'#3B82F6':'#EF4444'}`:undefined,
+          borderBottom:c[0]==='b'?`1.5px solid ${live?'#3B82F6':'#EF4444'}`:undefined,
+          borderLeft:c[1]==='l'?`1.5px solid ${live?'#3B82F6':'#EF4444'}`:undefined,
+          borderRight:c[1]==='r'?`1.5px solid ${live?'#3B82F6':'#EF4444'}`:undefined,
+          opacity:0.6 }}/>
       ))}
       <div style={{ position:'absolute',top:10,left:10,display:'flex',alignItems:'center',gap:6,
-        background:'rgba(3,8,16,0.78)',backdropFilter:'blur(8px)',
-        border:`1px solid ${live?'rgba(0,255,136,0.25)':'rgba(255,59,92,0.25)'}`,
-        borderRadius:6,padding:'5px 12px' }}>
+        background:'rgba(12,16,26,0.88)',
+        border:`1px solid ${live?'rgba(16,185,129,0.3)':'rgba(239,68,68,0.3)'}`,
+        borderRadius:4,padding:'4px 10px' }}>
         <div className={live?'dot-live':'dot-offline'}/>
-        <span style={{ fontSize:10,fontWeight:700,color:live?'#00ff88':'#ff3b5c',
-          letterSpacing:'0.1em',fontFamily:"'JetBrains Mono',monospace" }}>
-          {live?`LIVE · ${msg?.fps??0} FPS`:'NO SIGNAL'}
+        <span style={{ fontSize:9,fontWeight:800,color:live?'#10B981':'#EF4444',
+          letterSpacing:'0.08em',fontFamily:"'JetBrains Mono',monospace" }}>
+          {live?`CHANNEL 01 · ${msg?.fps??0} FPS`:'NO SIGNAL'}
         </span>
       </div>
       {!live && (
         <div style={{ position:'absolute',inset:0,display:'flex',alignItems:'center',justifyContent:'center',
-          background:'rgba(2,4,8,0.85)',flexDirection:'column',gap:10 }}>
-          <div style={{ fontSize:40,animation:'float 3s ease infinite' }}>📡</div>
-          <div style={{ fontSize:13,fontWeight:700,color:'#ff3b5c',letterSpacing:'0.1em' }}>⚠ CAMERA OFFLINE</div>
-          <div style={{ fontSize:10,color:'var(--text-muted)' }}>Start camera or upload a file to begin</div>
+          background:'rgba(8,12,20,0.88)',flexDirection:'column',gap:8 }}>
+          <div style={{ fontSize:32 }}>📡</div>
+          <div style={{ fontSize:12,fontWeight:800,color:'#EF4444',letterSpacing:'0.08em' }}>CAMERA STANDBY</div>
+          <div style={{ fontSize:10,color:'var(--text-muted)' }}>Click 'Start Webcam' or upload imagery to analyze</div>
         </div>
       )}
       {msg?.is_night && live && (
-        <div style={{ position:'absolute',top:10,right:10,background:'rgba(99,102,241,0.15)',
-          border:'1px solid rgba(99,102,241,0.3)',borderRadius:6,padding:'4px 10px',
-          fontSize:10,fontWeight:700,color:'#a5b4fc',letterSpacing:'0.1em' }}>🌙 NIGHT MODE</div>
+        <div style={{ position:'absolute',top:10,right:10,background:'rgba(30,41,59,0.9)',
+          border:'1px solid var(--border-light)',borderRadius:4,padding:'3px 8px',
+          fontSize:9,fontWeight:800,color:'#CBD5E1',letterSpacing:'0.08em' }}>🌙 NIGHT FILTER ACTIVE</div>
       )}
     </div>
   )
@@ -231,40 +233,36 @@ function LiveFeed({ msg,imageResult,mode }: { msg:WSMessage|null;imageResult:Ima
 
 function DetectionTable({ detections }: { detections:Detection[] }) {
   if (!detections.length) return (
-    <div style={{ padding:32,textAlign:'center',color:'var(--text-dim)',fontSize:12 }}>
-      <div style={{ fontSize:28,marginBottom:8 }}>🔎</div>
-      <div style={{ fontWeight:600,letterSpacing:'0.1em' }}>NO OBJECTS DETECTED</div>
-      <div style={{ fontSize:10,marginTop:4 }}>Waiting for AI pipeline detections</div>
+    <div style={{ padding:28,textAlign:'center',color:'var(--text-dim)',fontSize:11 }}>
+      <div style={{ fontSize:24,marginBottom:6 }}>🔎</div>
+      <div style={{ fontWeight:700,letterSpacing:'0.08em' }}>NO TARGETS IN SCENE</div>
+      <div style={{ fontSize:9,marginTop:3 }}>AI tracker awaiting object detection</div>
     </div>
   )
   return (
     <div style={{ overflowY:'auto',maxHeight:340 }}>
       <table>
         <thead>
-          <tr><th>ID</th><th>CLASS</th><th>CONF</th><th>MOVEMENT</th><th>DIR</th><th>ZONE</th><th>RISK</th><th>TIME</th></tr>
+          <tr><th>TRACK ID</th><th>CLASS</th><th>CONF</th><th>MOTION</th><th>DIR</th><th>ZONE</th><th>RISK</th><th>TIME</th></tr>
         </thead>
         <tbody>
           {detections.map(d=>(
             <tr key={d.track_id}>
-              <td><span style={{ fontFamily:"'JetBrains Mono',monospace",color:'var(--accent-blue)',fontWeight:700 }}>
+              <td><span style={{ fontFamily:"'JetBrains Mono',monospace",color:'#3B82F6',fontWeight:700 }}>
                 #{String(d.track_id).padStart(3,'0')}</span></td>
               <td>{catChip(d.category,d.class_name)}</td>
-              <td><span style={{ color:d.confidence>=0.75?'#00ff88':d.confidence>=0.5?'#ffb444':'#ff3b5c',
+              <td><span style={{ color:d.confidence>=0.75?'#10B981':d.confidence>=0.5?'#F59E0B':'#EF4444',
                 fontWeight:700,fontFamily:"'JetBrains Mono',monospace" }}>{(d.confidence*100).toFixed(0)}%</span></td>
-              <td><span style={{ fontSize:11 }}>{movIcon(d.movement_state)} {d.movement_state}</span></td>
-              <td style={{ fontSize:10,color:'var(--text-muted)' }}>{d.direction.replace('_',' ')}</td>
+              <td><span style={{ fontSize:10 }}>{movIcon(d.movement_state)} {d.movement_state}</span></td>
+              <td style={{ fontSize:9,color:'var(--text-muted)' }}>{d.direction.replace('_',' ')}</td>
               <td>{d.current_zone?<span className="badge badge-amber">{d.current_zone}</span>:
                 <span style={{ color:'var(--text-dim)' }}>—</span>}</td>
               <td>
-                <div style={{ display:'flex',alignItems:'center',gap:5 }}>
-                  <div style={{ width:28,height:3,borderRadius:99,background:'var(--bg-hover)',overflow:'hidden' }}>
-                    <div style={{ width:`${Math.min(100,d.risk_score)}%`,height:'100%',background:riskColor(d.risk_score) }}/>
-                  </div>
-                  <span style={{ fontSize:10,color:riskColor(d.risk_score),fontWeight:700,fontFamily:"'JetBrains Mono',monospace" }}>
-                    {d.risk_score}</span>
-                </div>
+                <span style={{ fontSize:10,color:riskColor(d.risk_score),fontWeight:800,fontFamily:"'JetBrains Mono',monospace" }}>
+                  {d.risk_score}
+                </span>
               </td>
-              <td style={{ fontSize:10,color:'var(--text-muted)',fontFamily:"'JetBrains Mono',monospace" }}>{d.time_in_scene}s</td>
+              <td style={{ fontSize:9,color:'var(--text-muted)',fontFamily:"'JetBrains Mono',monospace" }}>{d.time_in_scene}s</td>
             </tr>
           ))}
         </tbody>
@@ -276,35 +274,32 @@ function DetectionTable({ detections }: { detections:Detection[] }) {
 function EventsFeed({ events }: { events:AIEvent[] }) {
   const sorted = [...events].reverse()
   if (!sorted.length) return (
-    <div style={{ padding:32,textAlign:'center',color:'var(--text-dim)',fontSize:12 }}>
-      <div style={{ fontSize:28,marginBottom:8 }}>⏳</div>
-      <div style={{ fontWeight:600,letterSpacing:'0.1em' }}>NO EVENTS YET</div>
-      <div style={{ fontSize:10,marginTop:4 }}>Zone/behavior triggers will appear here</div>
+    <div style={{ padding:28,textAlign:'center',color:'var(--text-dim)',fontSize:11 }}>
+      <div style={{ fontSize:24,marginBottom:6 }}>⏳</div>
+      <div style={{ fontWeight:700,letterSpacing:'0.08em' }}>NO RECENT EVENTS</div>
+      <div style={{ fontSize:9,marginTop:3 }}>Perimeter breach and threat events will log here</div>
     </div>
   )
   return (
-    <div style={{ overflowY:'auto',maxHeight:360,padding:'8px 0' }}>
-      {sorted.map((evt,i)=>(
+    <div style={{ overflowY:'auto',maxHeight:360,padding:'6px 0' }}>
+      {sorted.map((evt)=>(
         <div key={evt.event_id} className={`event-item sev-bg-${evt.severity}`}
-          style={{ margin:'3px 10px',borderRadius:8,padding:'10px 14px',animationDelay:`${i*0.02}s` }}>
+          style={{ margin:'2px 8px',borderRadius:6,padding:'8px 12px' }}>
           <div style={{ display:'flex',justifyContent:'space-between',alignItems:'flex-start',gap:8 }}>
             <div style={{ flex:1 }}>
               <div style={{ display:'flex',alignItems:'center',gap:6,flexWrap:'wrap' }}>
-                <span className={`sev-${evt.severity}`} style={{ fontWeight:800,fontSize:11,letterSpacing:'0.06em' }}>
+                <span className={`sev-${evt.severity}`} style={{ fontWeight:800,fontSize:10,letterSpacing:'0.04em' }}>
                   [{sevEmoji(evt.severity)}] {evt.event_type.replace(/_/g,' ')}
                 </span>
                 {evt.track_id!=null&&<span className="badge badge-blue">T#{evt.track_id}</span>}
                 {evt.object_type&&<span className="badge badge-gray">{evt.object_type}</span>}
               </div>
-              {evt.zone_name&&<div style={{ fontSize:10,color:'#ffb444',marginTop:3 }}>Zone: {evt.zone_name}</div>}
-              {evt.description&&<div style={{ fontSize:10,color:'var(--text-dim)',marginTop:2 }}>{evt.description}</div>}
+              {evt.zone_name&&<div style={{ fontSize:9,color:'#F59E0B',marginTop:2 }}>Zone: {evt.zone_name}</div>}
+              {evt.description&&<div style={{ fontSize:9,color:'var(--text-secondary)',marginTop:2 }}>{evt.description}</div>}
             </div>
-            <div style={{ textAlign:'right',flexShrink:0 }}>
-              <div style={{ fontSize:10,fontFamily:"'JetBrains Mono',monospace",color:'var(--text-muted)' }}>
-                {evt.timestamp?.split('T')[1]?.slice(0,8)??''}
-              </div>
-              {evt.risk_score>0&&<div style={{ fontSize:10,color:riskColor(evt.risk_score),fontWeight:700,marginTop:2 }}>R:{evt.risk_score}</div>}
-            </div>
+            <span style={{ fontSize:8,color:'var(--text-muted)',fontFamily:"'JetBrains Mono',monospace",flexShrink:0 }}>
+              {evt.timestamp.slice(11,19)}
+            </span>
           </div>
         </div>
       ))}
@@ -312,112 +307,89 @@ function EventsFeed({ events }: { events:AIEvent[] }) {
   )
 }
 
-function ModuleGrid({ msg }: { msg:WSMessage|null }) {
-  const ms = msg?.module_status
+function ModulesPanel({ msg }: { msg:WSMessage|null }) {
   const mods = [
-    { n:'YOLO Detection', ok:true, d:msg?.model??'yolov8n.pt', i:'🎯' },
-    { n:'IoU Tracker', ok:true, d:'Multi-object', i:'🔍' },
-    { n:'Movement', ok:true, d:'Speed+Direction', i:'📐' },
-    { n:'Zone Manager', ok:true, d:`${ms?.zones??0} zones`, i:'🗺' },
-    { n:'Risk Engine', ok:true, d:'0-100 decay', i:'⚠' },
-    { n:'Camera Health', ok:true, d:'Freeze detect', i:'📷' },
-    { n:'Night Detect', ok:true, d:msg?.is_night?'NIGHT':'Day', i:'🌙' },
-    { n:'Face Detect', ok:ms?.face??true, d:'Haar cascade', i:'👤' },
-    { n:'ANPR', ok:ms?.anpr??false, d:ms?.anpr?'Active':'Needs easyocr', i:'🔤' },
-    { n:'Weapon Detect', ok:ms?.weapon??false, d:ms?.weapon?'Active':'Needs model', i:'🔫' },
+    { label:'YOLO DETECTOR', on:true, desc:msg?.model??'yolov8n.pt' },
+    { label:'WEAPON DETECTION', on:msg?.module_status?.weapon??false, desc:'Firearm Model active' },
+    { label:'ANPR ENGINE', on:msg?.module_status?.anpr??false, desc:'License Plate OCR' },
+    { label:'FACE DETECTOR', on:msg?.module_status?.face??true, desc:'Haar / Face tracker' },
+    { label:'ZONE ENGINE', on:(msg?.module_status?.zones??0)>0, desc:`${msg?.module_status?.zones??0} boundary sectors` },
+    { label:'RISK CALCULATOR', on:true, desc:'Operational matrix' },
   ]
   return (
-    <div style={{ display:'grid',gridTemplateColumns:'1fr 1fr',gap:6,padding:'12px 14px' }}>
+    <div style={{ padding:12,display:'grid',gridTemplateColumns:'1fr 1fr',gap:8 }}>
       {mods.map(m=>(
-        <div key={m.n} style={{ display:'flex',alignItems:'center',gap:8,
-          background:m.ok?'rgba(0,255,136,0.03)':'rgba(255,59,92,0.03)',
-          border:`1px solid ${m.ok?'rgba(0,255,136,0.1)':'rgba(255,59,92,0.1)'}`,
-          borderRadius:8,padding:'8px 10px' }}>
-          <span style={{ fontSize:14 }}>{m.i}</span>
-          <div style={{ flex:1,minWidth:0 }}>
-            <div style={{ fontSize:10,fontWeight:700,color:m.ok?'var(--text-primary)':'var(--text-muted)',
-              whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis' }}>{m.n}</div>
-            <div style={{ fontSize:9,color:'var(--text-dim)',marginTop:1 }}>{m.d}</div>
+        <div key={m.label} style={{ background:'var(--bg-card)',border:'1px solid var(--border)',borderRadius:6,padding:'10px 12px' }}>
+          <div style={{ display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:4 }}>
+            <span style={{ fontSize:10,fontWeight:800,color:'#F8FAFC' }}>{m.label}</span>
+            <span className={m.on?'badge badge-green':'badge badge-gray'}>{m.on?'ACTIVE':'OFFLINE'}</span>
           </div>
-          <div className={m.ok?'dot-live':'dot-offline'} style={{ width:6,height:6,flexShrink:0 }}/>
+          <div style={{ fontSize:9,color:'var(--text-muted)' }}>{m.desc}</div>
         </div>
       ))}
     </div>
   )
 }
 
-function CameraControls({ mode,setMode,onImage,onVideo,onStart,onStop,running }: {
-  mode:InputMode;setMode:(m:InputMode)=>void;onImage:(f:File)=>void;onVideo:(f:File)=>void;
-  onStart:()=>void;onStop:()=>void;running:boolean;
-}) {
-  const imgRef = useRef<HTMLInputElement>(null)
-  const vidRef = useRef<HTMLInputElement>(null)
+function ImageUploadPanel({ onUpload }: { onUpload:(f:File)=>void }) {
+  const ref = useRef<HTMLInputElement>(null)
+  const [drag, setDrag] = useState(false)
   return (
-    <div style={{ padding:'14px 16px',display:'flex',flexDirection:'column',gap:12 }}>
-      <div style={{ display:'flex',gap:8 }}>
-        {([['live','📡','LIVE'],['image','🖼','IMAGE'],['video','🎬','VIDEO']] as const).map(([id,icon,label])=>(
-          <button key={id} className={`mode-btn ${mode===id?'active':''}`} onClick={()=>setMode(id as InputMode)}>
-            <span>{icon}</span><span>{label}</span>
-          </button>
-        ))}
-      </div>
-      <div style={{ display:'flex',gap:8,alignItems:'center' }}>
-        {mode==='live'&&(!running
-          ?<button className="btn btn-green" onClick={onStart}>▶ Start Webcam</button>
-          :<button className="btn btn-red" onClick={onStop}>⏹ Stop</button>)}
-        {mode==='image'&&<>
-          <button className="btn btn-default" onClick={()=>imgRef.current?.click()}>📂 Upload Image</button>
-          <input ref={imgRef} type="file" accept=".jpg,.jpeg,.png,.bmp" style={{ display:'none' }}
-            onChange={e=>e.target.files?.[0]&&onImage(e.target.files[0])}/>
-        </>}
-        {mode==='video'&&<>
-          <button className="btn btn-default" onClick={()=>vidRef.current?.click()}>📂 Upload Video</button>
-          <input ref={vidRef} type="file" accept=".mp4,.avi,.mov,.mkv" style={{ display:'none' }}
-            onChange={e=>e.target.files?.[0]&&onVideo(e.target.files[0])}/>
-        </>}
-        <span style={{ fontSize:10,color:'var(--text-dim)' }}>
-          {mode==='live'?'cv2.VideoCapture(0) — system webcam':
-           mode==='image'?'Real YOLO inference — annotated result returned':
-           'Full AI pipeline — MJPEG stream output'}
-        </span>
+    <div style={{ padding:14 }}>
+      <div
+        onDragOver={e=>{ e.preventDefault(); setDrag(true) }}
+        onDragLeave={()=>setDrag(false)}
+        onDrop={e=>{ e.preventDefault(); setDrag(false); const f=e.dataTransfer.files[0]; if(f) onUpload(f) }}
+        onClick={()=>ref.current?.click()}
+        style={{ border:`1.5px dashed ${drag?'#3B82F6':'var(--border-light)'}`,borderRadius:6,
+          padding:24,textAlign:'center',cursor:'pointer',background:drag?'rgba(59,130,246,0.06)':'transparent' }}>
+        <div style={{ fontSize:28,marginBottom:6 }}>📤</div>
+        <div style={{ fontSize:11,fontWeight:700,color:'#F8FAFC' }}>UPLOAD SURVEILLANCE IMAGE</div>
+        <div style={{ fontSize:9,color:'var(--text-muted)',marginTop:3 }}>Drop JPG, PNG file to run Weapons, Plate & Object detection</div>
+        <input ref={ref} type="file" accept="image/*" style={{ display:'none' }} onChange={e=>{ const f=e.target.files?.[0]; if(f) onUpload(f) }}/>
       </div>
     </div>
   )
 }
 
-function ImageSummary({ result }: { result:ImageResult }) {
-  const counts = result.counts as any
+function VideoUploadPanel({ onUpload }: { onUpload:(f:File)=>void }) {
+  const ref = useRef<HTMLInputElement>(null)
+  const [drag, setDrag] = useState(false)
   return (
-    <div style={{ padding:'14px 16px' }}>
-      <div style={{ display:'grid',gridTemplateColumns:'repeat(auto-fit, minmax(80px, 1fr))',gap:8,marginBottom:12 }}>
-        {[
-          ['PEOPLE', counts.person || 0, 'var(--accent-blue)'],
-          ['VEHICLES', counts.vehicle || 0, '#00ff88'],
-          ['WEAPONS', counts.weapon || 0, '#ff3b5c'],
-          ['PLATES', counts.plate || 0, '#00e5ff'],
-          ['ANIMALS', counts.animal || 0, '#ffb444'],
-          ['TOTAL', counts.total || result.detections.length, 'var(--accent-cyan)']
-        ].map(([l,v,c])=>(
-          <div key={String(l)} style={{ background:'var(--bg-card)',border:'1px solid var(--border)',
-            borderRadius:8,padding:'10px',textAlign:'center' }}>
-            <div style={{ fontSize:20,fontWeight:800,color:String(c),fontFamily:"'JetBrains Mono',monospace" }}>{v}</div>
-            <div style={{ fontSize:9,fontWeight:700,color:'var(--text-muted)',letterSpacing:'0.1em' }}>{l}</div>
-          </div>
-        ))}
+    <div style={{ padding:14 }}>
+      <div
+        onDragOver={e=>{ e.preventDefault(); setDrag(true) }}
+        onDragLeave={()=>setDrag(false)}
+        onDrop={e=>{ e.preventDefault(); setDrag(false); const f=e.dataTransfer.files[0]; if(f) onUpload(f) }}
+        onClick={()=>ref.current?.click()}
+        style={{ border:`1.5px dashed ${drag?'#3B82F6':'var(--border-light)'}`,borderRadius:6,
+          padding:24,textAlign:'center',cursor:'pointer',background:drag?'rgba(59,130,246,0.06)':'transparent' }}>
+        <div style={{ fontSize:28,marginBottom:6 }}>🎞</div>
+        <div style={{ fontSize:11,fontWeight:700,color:'#F8FAFC' }}>UPLOAD SURVEILLANCE VIDEO</div>
+        <div style={{ fontSize:9,color:'var(--text-muted)',marginTop:3 }}>Drop MP4, AVI video file to run continuous border analytics</div>
+        <input ref={ref} type="file" accept="video/*" style={{ display:'none' }} onChange={e=>{ const f=e.target.files?.[0]; if(f) onUpload(f) }}/>
       </div>
-      <div style={{ display:'flex',flexDirection:'column',gap:4,maxHeight:250,overflowY:'auto' }}>
+    </div>
+  )
+}
+
+function ImageResultsList({ result }: { result:ImageResult }) {
+  return (
+    <div style={{ padding:14 }}>
+      <div style={{ fontSize:10,fontWeight:700,color:'var(--text-muted)',letterSpacing:'0.08em',marginBottom:8 }}>
+        ANALYSIS RESULTS ({result.detections.length} DETECTIONS)
+      </div>
+      <div style={{ maxHeight:200,overflowY:'auto' }}>
         {result.detections.map((d,i)=>(
-          <div key={i} style={{ display:'flex',gap:10,padding:'7px 0',borderBottom:'1px solid rgba(14,35,60,0.8)',alignItems:'center' }}>
+          <div key={i} style={{ display:'flex',gap:8,padding:'6px 0',borderBottom:'1px solid var(--border)',alignItems:'center' }}>
             {catChip(d.category,d.class_name)}
-            <span style={{ fontFamily:"'JetBrains Mono',monospace",fontSize:11,
-              color:d.confidence>=0.75?'#00ff88':'#ffb444',fontWeight:700 }}>{(d.confidence*100).toFixed(0)}%</span>
-            <span style={{ fontSize:10,color:'var(--text-dim)',fontFamily:"'JetBrains Mono',monospace" }}>
+            <span style={{ fontFamily:"'JetBrains Mono',monospace",fontSize:10,
+              color:d.confidence>=0.75?'#10B981':'#F59E0B',fontWeight:700 }}>{(d.confidence*100).toFixed(0)}%</span>
+            <span style={{ fontSize:9,color:'var(--text-dim)',fontFamily:"'JetBrains Mono',monospace" }}>
               [{d.bbox.join(', ')}]</span>
           </div>
         ))}
       </div>
-      {!result.detections.length&&<div style={{ color:'var(--text-dim)',fontSize:12,padding:'12px 0' }}>
-        No supported objects detected</div>}
     </div>
   )
 }
@@ -432,7 +404,7 @@ export default function App() {
   const [loadMsg, setLoadMsg] = useState('')
   const [error, setError] = useState('')
 
-  // Authority Portal state - Always requires PIN clearance to access
+  // Authority Portal state - Always requires PIN clearance
   const [authorityUser, setAuthorityUser] = useState<AuthorityUser | null>(null)
   const [showAuthModal, setShowAuthModal] = useState(false)
   const [viewMode, setViewMode] = useState<'operator' | 'authority'>('operator')
@@ -449,7 +421,7 @@ export default function App() {
   }
 
   const handleImage = useCallback(async (file:File)=>{
-    setLoading(true);setLoadMsg(`Running YOLO on ${file.name}...`);setError('');setImageResult(null)
+    setLoading(true);setLoadMsg(`Running detection on ${file.name}...`);setError('');setImageResult(null)
     try { setImageResult(await detectImage(file)) } catch(e:any){ setError(e.message) }
     finally { setLoading(false);setLoadMsg('') }
   },[])
@@ -461,7 +433,7 @@ export default function App() {
   },[])
 
   const handleStart = useCallback(async ()=>{
-    setLoading(true);setLoadMsg('Opening webcam...');setError('')
+    setLoading(true);setLoadMsg('Connecting to video source...');setError('')
     try { await startCamera('0');setCameraRunning(true) } catch(e:any){ setError(e.message) }
     finally { setLoading(false);setLoadMsg('') }
   },[])
@@ -475,13 +447,6 @@ export default function App() {
   const riskLv = message?.risk_level ?? riskLabel(riskScore)
   const wsLost = wsStatus==='disconnected'||wsStatus==='error'
   const camLost = message?.camera_status==='offline'&&wsStatus==='connected'
-
-  const PH = (text:string) => (
-    <div style={{ display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',
-      padding:40,color:'var(--text-dim)',gap:8 }}>
-      <div style={{ fontSize:9,letterSpacing:'0.18em',fontWeight:700 }}>{text}</div>
-    </div>
-  )
 
   if (viewMode === 'authority' && authorityUser) {
     return (
@@ -517,139 +482,139 @@ export default function App() {
         <main style={{ flex:1,overflowY:'auto',background:'var(--bg-base)' }}>
           {/* Alerts */}
           {(wsLost||camLost)&&(
-            <div style={{ padding:'10px 20px 0',display:'flex',flexDirection:'column',gap:6 }}>
-              {wsLost&&<div className="alert-banner alert-danger">⚡ LIVE DATA LOST · Last: {lastReceived?.toLocaleTimeString()??'?'} · Reconnecting...</div>}
-              {camLost&&<div className="alert-banner alert-warn">📷 CAMERA OFFLINE · Start a camera or upload a file</div>}
+            <div style={{ padding:'8px 16px 0',display:'flex',flexDirection:'column',gap:6 }}>
+              {wsLost&&<div className="alert-banner alert-danger">⚡ TELEMETRY LINK DISCONNECTED · Reconnecting to server...</div>}
+              {camLost&&<div className="alert-banner alert-warn">📷 CAMERA STANDBY · Start live camera or upload a file</div>}
             </div>
           )}
           {/* Loading */}
           {(loading||error)&&(
-            <div style={{ padding:'10px 20px 0',display:'flex',gap:8,flexDirection:'column' }}>
-              {loading&&<div style={{ background:'rgba(56,182,255,0.06)',border:'1px solid rgba(56,182,255,0.2)',
-                borderRadius:8,padding:'10px 16px',fontSize:12,color:'var(--accent-blue)',display:'flex',gap:8,alignItems:'center' }}>
-                <div style={{ width:14,height:14,border:'2px solid var(--accent-blue)',borderTopColor:'transparent',
-                  borderRadius:'50%',animation:'spin 0.7s linear infinite' }}/>{loadMsg}</div>}
-              {error&&<div className="alert-banner alert-danger">{error}</div>}
+            <div style={{ padding:'8px 16px 0' }}>
+              {loading&&<div className="alert-banner" style={{ background:'rgba(59,130,246,0.1)',border:'1px solid rgba(59,130,246,0.3)',color:'#93C5FD' }}>
+                ⏳ {loadMsg}</div>}
+              {error&&<div className="alert-banner alert-danger">⚠ {error}</div>}
             </div>
           )}
 
-          {/* DASHBOARD TAB */}
+          {/* ════ TAB: DASHBOARD ════ */}
           {activeTab==='dashboard'&&(
-            <div style={{ padding:'16px 20px',display:'flex',flexDirection:'column',gap:14 }}>
-              {/* Stats */}
-              <div style={{ display:'flex',gap:12 }}>
-                <StatCard icon="👤" label="People"   value={counts?.person??null}  color="var(--accent-blue)"/>
-                <StatCard icon="🚗" label="Vehicles" value={counts?.vehicle??null} color="#00ff88"/>
-                <StatCard icon="🐾" label="Animals"  value={counts?.animal??null}  color="#ffb444"/>
-                <StatCard icon="🔍" label="Tracked"  value={counts?.tracked??null} color="var(--accent-cyan)"/>
-                <StatCard icon="🚨" label="Events"   value={evts.length}           color="#ff7043"
-                  sub={evts.length>0?`Latest: ${evts[evts.length-1]?.severity}`:undefined}/>
-                <StatCard icon="⚠"  label="Risk"     value={riskScore}             color={riskColor(riskScore)} sub={riskLv}/>
+            <div style={{ padding:16,display:'flex',flexDirection:'column',gap:14 }}>
+              {/* Stat Cards */}
+              <div style={{ display:'flex',gap:10,flexWrap:'wrap' }}>
+                <StatCard icon="🎯" label="Total Targets" value={counts?.total??0} color="#3B82F6" sub={`${counts?.tracked??0} tracked`}/>
+                <StatCard icon="👤" label="Personnel" value={counts?.person??0} color="#60A5FA"/>
+                <StatCard icon="🚗" label="Vehicles" value={counts?.vehicle??0} color="#34D399"/>
+                <StatCard icon="🔫" label="Firearms" value={counts?.weapon??0} color={(counts?.weapon??0)>0?'#EF4444':'#64748B'} sub={(counts?.weapon??0)>0?'THREAT DETECTED':'Clear'}/>
+                <StatCard icon="🔢" label="Number Plates" value={counts?.plate??0} color="#FBBF24"/>
+                <StatCard icon="🚨" label="Incidents" value={evts.length} color={evts.length>0?'#F87171':'#64748B'}/>
               </div>
 
-              {/* 2-col layout */}
+              {/* Main Grid: Left Video / Right Telemetry */}
               <div style={{ display:'grid',gridTemplateColumns:'1fr 340px',gap:14 }}>
-                <div style={{ display:'flex',flexDirection:'column',gap:14 }}>
-                  {/* Input controls */}
+                {/* Left: Feed & Mode */}
+                <div style={{ display:'flex',flexDirection:'column',gap:10 }}>
                   <div className="panel panel-glow">
-                    <div className="panel-header"><div className="panel-header-icon">📡</div>INPUT MODE</div>
-                    <CameraControls mode={mode} setMode={(m)=>{setMode(m);if(m!=='image')setImageResult(null)}}
-                      onImage={handleImage} onVideo={handleVideo}
-                      onStart={handleStart} onStop={handleStop} running={cameraRunning}/>
-                  </div>
-                  {/* Video */}
-                  <div className="panel panel-glow">
-                    <div className="panel-header">
-                      <div className="panel-header-icon">🎥</div>
-                      {mode==='image'?'AI PROCESSED IMAGE':'LIVE AI FEED'}
-                      {message?.camera_status==='online'&&mode!=='image'&&(
-                        <span className="badge badge-green" style={{ marginLeft:'auto' }}>● RECEIVING</span>
-                      )}
+                    {/* Header + Mode Switcher */}
+                    <div style={{ padding:'8px 12px',display:'flex',justifyContent:'space-between',alignItems:'center',borderBottom:'1px solid var(--border)' }}>
+                      <div style={{ display:'flex',gap:6 }}>
+                        {(['live','image','video'] as InputMode[]).map(m=>(
+                          <button key={m} className={`mode-btn ${mode===m?'active':''}`} onClick={()=>setMode(m)}>
+                            {m==='live'?'📹 LIVE FEED':m==='image'?'📷 IMAGE ANALYST':'🎞 VIDEO FORENSICS'}
+                          </button>
+                        ))}
+                      </div>
+                      <div style={{ display:'flex',gap:6 }}>
+                        {mode==='live'&&(
+                          !cameraRunning?(
+                            <button className="btn btn-green" onClick={handleStart}>▶ START WEBCAM</button>
+                          ):(
+                            <button className="btn btn-red" onClick={handleStop}>⏹ STOP</button>
+                          )
+                        )}
+                      </div>
                     </div>
-                    <div style={{ padding:10 }}><LiveFeed msg={message} imageResult={imageResult} mode={mode}/></div>
-                    {mode==='image'&&imageResult&&<><div className="divider"/><ImageSummary result={imageResult}/></>}
+
+                    <div style={{ padding:10 }}>
+                      <LiveFeed msg={message} imageResult={imageResult} mode={mode}/>
+                    </div>
+
+                    {mode==='image'&&<ImageUploadPanel onUpload={handleImage}/>}
+                    {mode==='image'&&imageResult&&<ImageResultsList result={imageResult}/>}
+                    {mode==='video'&&<VideoUploadPanel onUpload={handleVideo}/>}
                   </div>
-                  {/* Table */}
+
+                  {/* Detection Table */}
                   <div className="panel panel-glow">
                     <div className="panel-header">
-                      <div className="panel-header-icon">📊</div>ACTIVE TRACKED OBJECTS
-                      <span style={{ marginLeft:'auto',fontSize:9,color:'var(--text-muted)' }}>
-                        {dets.length} OBJECT{dets.length!==1?'S':''}</span>
+                      <div className="panel-header-icon">🔎</div>
+                      ACTIVE TARGET TRACKS ({dets.length})
                     </div>
                     <DetectionTable detections={dets}/>
                   </div>
                 </div>
 
-                {/* Right col */}
-                <div style={{ display:'flex',flexDirection:'column',gap:14 }}>
+                {/* Right: Risk Engine & Real-time Feeds */}
+                <div style={{ display:'flex',flexDirection:'column',gap:10 }}>
                   <div className="panel panel-glow">
-                    <div className="panel-header"><div className="panel-header-icon">⚠</div>RISK ENGINE</div>
-                    {message?<RiskGauge score={riskScore} level={riskLv}/>:PH('AWAITING BACKEND')}
+                    <div className="panel-header">
+                      <div className="panel-header-icon">⚡</div>
+                      PERIMETER THREAT ASSESSMENT
+                    </div>
+                    <RiskGauge score={riskScore} level={riskLv}/>
                   </div>
+
                   <div className="panel panel-glow" style={{ flex:1 }}>
                     <div className="panel-header">
-                      <div className="panel-header-icon">🚨</div>LIVE EVENTS
-                      {evts.length>0&&<span style={{ marginLeft:'auto',background:'#7f1d1d',color:'#fca5a5',
-                        borderRadius:99,padding:'1px 8px',fontSize:9,fontWeight:800 }}>{evts.length}</span>}
+                      <div className="panel-header-icon">🚨</div>
+                      REAL-TIME EVENT LOG ({evts.length})
                     </div>
                     <EventsFeed events={evts}/>
-                  </div>
-                  <div className="panel panel-glow">
-                    <div className="panel-header"><div className="panel-header-icon">⚙</div>AI MODULES</div>
-                    <ModuleGrid msg={message}/>
                   </div>
                 </div>
               </div>
             </div>
           )}
 
+          {/* ════ TAB: TRACKS ════ */}
           {activeTab==='tracks'&&(
-            <div style={{ padding:'16px 20px' }}>
+            <div style={{ padding:16 }}>
               <div className="panel panel-glow">
-                <div className="panel-header"><div className="panel-header-icon">🔍</div>ALL TRACKED OBJECTS
-                  <span style={{ marginLeft:'auto',fontSize:9,color:'var(--text-muted)' }}>{dets.length} TRACKED</span>
+                <div className="panel-header">
+                  <div className="panel-header-icon">🔍</div>
+                  FULL TARGET TRACKING MATRIX
                 </div>
                 <DetectionTable detections={dets}/>
               </div>
             </div>
           )}
 
+          {/* ════ TAB: EVENTS ════ */}
           {activeTab==='events'&&(
-            <div style={{ padding:'16px 20px' }}>
+            <div style={{ padding:16 }}>
               <div className="panel panel-glow">
-                <div className="panel-header"><div className="panel-header-icon">🚨</div>EVENT FEED
-                  {evts.length>0&&<span style={{ marginLeft:'auto',background:'#7f1d1d',color:'#fca5a5',
-                    borderRadius:99,padding:'1px 8px',fontSize:9,fontWeight:800 }}>{evts.length}</span>}
+                <div className="panel-header">
+                  <div className="panel-header-icon">🚨</div>
+                  SECURITY INCIDENT & BREACH TIMELINE
                 </div>
                 <EventsFeed events={evts}/>
               </div>
             </div>
           )}
 
+          {/* ════ TAB: MODULES ════ */}
           {activeTab==='modules'&&(
-            <div style={{ padding:'16px 20px',display:'flex',flexDirection:'column',gap:14 }}>
+            <div style={{ padding:16 }}>
               <div className="panel panel-glow">
-                <div className="panel-header"><div className="panel-header-icon">⚙</div>AI MODULE STATUS</div>
-                <ModuleGrid msg={message}/>
-              </div>
-              <div className="panel panel-glow">
-                <div className="panel-header"><div className="panel-header-icon">⚠</div>RISK ENGINE</div>
-                {message?<RiskGauge score={riskScore} level={riskLv}/>:PH('AWAITING')}
+                <div className="panel-header">
+                  <div className="panel-header-icon">⚙</div>
+                  AI SUBSYSTEMS STATUS
+                </div>
+                <ModulesPanel msg={message}/>
               </div>
             </div>
           )}
-
-          {/* Footer */}
-          <div style={{ padding:'10px 24px',borderTop:'1px solid rgba(14,35,60,0.8)',
-            display:'flex',justifyContent:'space-between',fontSize:9,
-            color:'var(--text-dim)',fontWeight:600,letterSpacing:'0.1em' }}>
-            <div>AI BORDER SURVEILLANCE · SIH 2026</div>
-            <div>ALL VALUES FROM REAL YOLOv8 AI BACKEND</div>
-            <div style={{ color:wsStatus==='connected'?'#00ff88':'#ff3b5c' }}>WS {wsStatus.toUpperCase()}</div>
-          </div>
         </main>
       </div>
-      <style>{`@keyframes spin{to{transform:rotate(360deg)}} @keyframes float{0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)}}`}</style>
     </div>
   )
 }

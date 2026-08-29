@@ -28,11 +28,11 @@ interface Props {
 
 const sevBadge = (sev: string) => {
   const map: Record<string, { bg: string; color: string; border: string }> = {
-    CRITICAL: { bg: 'rgba(255,59,92,0.15)', color: '#ff3b5c', border: 'rgba(255,59,92,0.4)' },
-    HIGH: { bg: 'rgba(255,112,67,0.15)', color: '#ff7043', border: 'rgba(255,112,67,0.4)' },
-    MEDIUM: { bg: 'rgba(255,180,68,0.15)', color: '#ffb444', border: 'rgba(255,180,68,0.4)' },
-    LOW: { bg: 'rgba(0,255,136,0.15)', color: '#00ff88', border: 'rgba(0,255,136,0.4)' },
-    INFO: { bg: 'rgba(56,182,255,0.15)', color: '#38b6ff', border: 'rgba(56,182,255,0.4)' },
+    CRITICAL: { bg: 'rgba(239, 68, 68, 0.12)', color: '#F87171', border: 'rgba(239, 68, 68, 0.35)' },
+    HIGH: { bg: 'rgba(249, 115, 22, 0.12)', color: '#FB923C', border: 'rgba(249, 115, 22, 0.35)' },
+    MEDIUM: { bg: 'rgba(245, 158, 11, 0.12)', color: '#FBBF24', border: 'rgba(245, 158, 11, 0.35)' },
+    LOW: { bg: 'rgba(16, 185, 129, 0.12)', color: '#34D399', border: 'rgba(16, 185, 129, 0.35)' },
+    INFO: { bg: 'rgba(59, 130, 246, 0.12)', color: '#60A5FA', border: 'rgba(59, 130, 246, 0.35)' },
   };
   const s = map[sev.toUpperCase()] || map.INFO;
   return (
@@ -42,10 +42,10 @@ const sevBadge = (sev: string) => {
         color: s.color,
         border: `1px solid ${s.border}`,
         borderRadius: 4,
-        padding: '2px 8px',
-        fontSize: 10,
+        padding: '2px 6px',
+        fontSize: 9,
         fontWeight: 800,
-        letterSpacing: '0.08em',
+        letterSpacing: '0.04em',
       }}
     >
       {sev.toUpperCase()}
@@ -54,11 +54,11 @@ const sevBadge = (sev: string) => {
 };
 
 const statusBadge = (st: string = 'NEW') => {
-  const map: Record<string, { bg: string; color: string }> = {
-    NEW: { bg: '#7f1d1d', color: '#fca5a5' },
-    ACKNOWLEDGED: { bg: '#78350f', color: '#fde68a' },
-    INVESTIGATING: { bg: '#1e3a8a', color: '#93c5fd' },
-    RESOLVED: { bg: '#064e3b', color: '#6ee7b7' },
+  const map: Record<string, { bg: string; color: string; border: string }> = {
+    NEW: { bg: '#7F1D1D', color: '#FECACA', border: '#EF4444' },
+    ACKNOWLEDGED: { bg: '#78350F', color: '#FDE68A', border: '#F59E0B' },
+    INVESTIGATING: { bg: '#1E3A8A', color: '#BFDBFE', border: '#3B82F6' },
+    RESOLVED: { bg: '#064E3B', color: '#A7F3D0', border: '#10B981' },
   };
   const s = map[st.toUpperCase()] || map.NEW;
   return (
@@ -66,11 +66,12 @@ const statusBadge = (st: string = 'NEW') => {
       style={{
         background: s.bg,
         color: s.color,
-        borderRadius: 99,
-        padding: '2px 10px',
+        border: `1px solid ${s.border}`,
+        borderRadius: 4,
+        padding: '2px 6px',
         fontSize: 9,
         fontWeight: 800,
-        letterSpacing: '0.08em',
+        letterSpacing: '0.04em',
       }}
     >
       ● {st.toUpperCase()}
@@ -170,91 +171,89 @@ export function AuthorityPortal({ user, msg, wsStatus, onExit }: Props) {
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', background: 'var(--bg-void)', overflow: 'hidden' }}>
-      {/* ── Authority Header ── */}
+      {/* ── Defense Authority Header ── */}
       <header
         style={{
-          background: 'linear-gradient(180deg, #020712 0%, #040d1a 100%)',
-          borderBottom: '1px solid rgba(255, 180, 68, 0.25)',
-          padding: '0 24px',
-          height: 62,
+          background: 'var(--bg-surface)',
+          borderBottom: '1px solid var(--border)',
+          padding: '0 20px',
+          height: 56,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
           position: 'sticky',
           top: 0,
           zIndex: 300,
-          boxShadow: '0 4px 30px rgba(0,0,0,0.85)',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <div
             style={{
-              width: 40,
-              height: 40,
-              background: 'linear-gradient(135deg, rgba(255, 180, 68, 0.2), rgba(255, 59, 92, 0.15))',
-              border: '1px solid rgba(255, 180, 68, 0.4)',
-              borderRadius: 10,
+              width: 36,
+              height: 36,
+              background: 'rgba(217, 119, 6, 0.12)',
+              border: '1px solid rgba(217, 119, 6, 0.35)',
+              borderRadius: 6,
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              fontSize: 20,
-              boxShadow: '0 0 25px rgba(255, 180, 68, 0.2)',
+              fontSize: 18,
             }}
           >
             🏛
           </div>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <span style={{ fontSize: 14, fontWeight: 900, letterSpacing: '0.14em', color: '#ffb444' }}>
-                BORDER SURVEILLANCE COMMAND
+              <span style={{ fontSize: 13, fontWeight: 800, letterSpacing: '0.06em', color: '#F8FAFC' }}>
+                AGENCY COMMAND PORTAL
               </span>
               <span
                 style={{
-                  background: 'rgba(255, 180, 68, 0.15)',
-                  border: '1px solid rgba(255, 180, 68, 0.35)',
-                  color: '#ffb444',
-                  fontSize: 9,
+                  background: 'rgba(217, 119, 6, 0.12)',
+                  border: '1px solid rgba(217, 119, 6, 0.35)',
+                  color: '#FBBF24',
+                  fontSize: 8,
                   fontWeight: 800,
-                  padding: '2px 8px',
+                  padding: '2px 6px',
                   borderRadius: 4,
-                  letterSpacing: '0.1em',
+                  letterSpacing: '0.06em',
                 }}
               >
-                HIGHER AUTHORITY PORTAL
+                HIGHER CLEARANCE
               </span>
             </div>
-            <div style={{ fontSize: 9, letterSpacing: '0.15em', color: 'var(--text-muted)' }}>
-              AGENCY HEADQUARTERS · REAL-TIME STRATEGIC OVERVIEW · SIH 2026
+            <div style={{ fontSize: 9, letterSpacing: '0.06em', color: 'var(--text-muted)', fontWeight: 600 }}>
+              BORDER SECURITY HEADQUARTERS · STRATEGIC THREAT REPOSITORY · SIH 2026
             </div>
           </div>
         </div>
 
         {/* User Identity & Clearance */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
           <div
             style={{
-              background: wsStatus === 'connected' ? 'rgba(0, 255, 136, 0.1)' : 'rgba(255, 59, 92, 0.1)',
-              border: `1px solid ${wsStatus === 'connected' ? 'rgba(0, 255, 136, 0.3)' : 'rgba(255, 59, 92, 0.3)'}`,
-              color: wsStatus === 'connected' ? '#00ff88' : '#ff3b5c',
+              background: wsStatus === 'connected' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
+              border: `1px solid ${wsStatus === 'connected' ? 'rgba(16, 185, 129, 0.3)' : 'rgba(239, 68, 68, 0.3)'}`,
+              color: wsStatus === 'connected' ? '#10B981' : '#EF4444',
               fontSize: 9,
               fontWeight: 800,
-              padding: '4px 10px',
-              borderRadius: 99,
-              letterSpacing: '0.1em',
+              padding: '3px 8px',
+              borderRadius: 4,
+              letterSpacing: '0.06em',
               display: 'flex',
               alignItems: 'center',
-              gap: 6,
+              gap: 5,
             }}
           >
-            <div className={wsStatus === 'connected' ? 'dot-live' : 'dot-offline'} style={{ width: 6, height: 6 }} />
-            WS {wsStatus.toUpperCase()}
+            <div className={wsStatus === 'connected' ? 'dot-live' : 'dot-offline'} style={{ width: 5, height: 5 }} />
+            LINK {wsStatus.toUpperCase()}
           </div>
 
           <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: 11, fontWeight: 800, color: '#fff', letterSpacing: '0.06em' }}>
+            <div style={{ fontSize: 11, fontWeight: 800, color: '#F8FAFC', letterSpacing: '0.04em' }}>
               {user.name}
             </div>
-            <div style={{ fontSize: 9, color: '#ffb444', letterSpacing: '0.08em', fontWeight: 600 }}>
+            <div style={{ fontSize: 9, color: '#FBBF24', letterSpacing: '0.04em', fontWeight: 600 }}>
               {user.role} · {user.badge}
             </div>
           </div>
@@ -262,21 +261,21 @@ export function AuthorityPortal({ user, msg, wsStatus, onExit }: Props) {
           <button
             onClick={onExit}
             style={{
-              background: 'rgba(56, 182, 255, 0.12)',
-              border: '1px solid rgba(56, 182, 255, 0.3)',
-              color: 'var(--accent-blue)',
-              borderRadius: 8,
-              padding: '6px 14px',
+              background: 'rgba(255, 255, 255, 0.05)',
+              border: '1px solid var(--border-light)',
+              color: 'var(--text-secondary)',
+              borderRadius: 6,
+              padding: '6px 12px',
               fontSize: 10,
               fontWeight: 800,
-              letterSpacing: '0.1em',
+              letterSpacing: '0.06em',
               cursor: 'pointer',
               display: 'flex',
               alignItems: 'center',
               gap: 6,
             }}
           >
-            ← OPERATOR VIEW
+            ← LOCK / OPERATOR VIEW
           </button>
         </div>
       </header>
@@ -285,37 +284,36 @@ export function AuthorityPortal({ user, msg, wsStatus, onExit }: Props) {
       {latestCritEvent && (
         <div
           style={{
-            background: 'linear-gradient(90deg, #7f1d1d 0%, #450a0a 100%)',
-            borderBottom: '2px solid #ef4444',
-            padding: '10px 24px',
+            background: '#7F1D1D',
+            borderBottom: '2px solid #EF4444',
+            padding: '8px 20px',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            animation: 'pulse 2s infinite',
             zIndex: 250,
           }}
         >
-          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-            <div style={{ fontSize: 22, animation: 'spin 3s linear infinite' }}>🚨</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+            <div style={{ fontSize: 18 }}>🚨</div>
             <div>
-              <div style={{ fontSize: 13, fontWeight: 900, color: '#fef2f2', letterSpacing: '0.1em' }}>
-                CRITICAL SECURITY EVENT IN PROGRESS · {latestCritEvent.event_type}
+              <div style={{ fontSize: 12, fontWeight: 800, color: '#FEF2F2', letterSpacing: '0.04em' }}>
+                PRIORITY DEFENSE EVENT: {latestCritEvent.event_type}
               </div>
-              <div style={{ fontSize: 10, color: '#fca5a5' }}>
-                Camera: <strong>{latestCritEvent.camera_id}</strong> | Zone: {latestCritEvent.zone_name || 'Restricted Zone'} | Time: {latestCritEvent.timestamp}
+              <div style={{ fontSize: 9, color: '#FECACA' }}>
+                Camera: <strong>{latestCritEvent.camera_id}</strong> | Zone: {latestCritEvent.zone_name || 'Border Perimeter'} | Trigger Time: {latestCritEvent.timestamp}
               </div>
             </div>
           </div>
-          <div style={{ display: 'flex', gap: 10 }}>
+          <div style={{ display: 'flex', gap: 8 }}>
             <button
               onClick={() => handleAcknowledge(latestCritEvent.event_id)}
               style={{
-                background: '#dc2626',
-                border: '1px solid #f87171',
-                color: '#fff',
-                borderRadius: 6,
-                padding: '6px 14px',
-                fontSize: 11,
+                background: '#DC2626',
+                border: '1px solid #F87171',
+                color: '#FFFFFF',
+                borderRadius: 4,
+                padding: '5px 12px',
+                fontSize: 10,
                 fontWeight: 800,
                 cursor: 'pointer',
               }}
@@ -328,17 +326,17 @@ export function AuthorityPortal({ user, msg, wsStatus, onExit }: Props) {
                 setSelectedIncident(latestCritEvent as Incident);
               }}
               style={{
-                background: 'rgba(0,0,0,0.5)',
-                border: '1px solid #fca5a5',
-                color: '#fff',
-                borderRadius: 6,
-                padding: '6px 14px',
-                fontSize: 11,
+                background: 'rgba(0,0,0,0.4)',
+                border: '1px solid #FECACA',
+                color: '#FFFFFF',
+                borderRadius: 4,
+                padding: '5px 12px',
+                fontSize: 10,
                 fontWeight: 800,
                 cursor: 'pointer',
               }}
             >
-              VIEW DOSSIER →
+              INSPECT DOSSIER →
             </button>
           </div>
         </div>
@@ -346,35 +344,35 @@ export function AuthorityPortal({ user, msg, wsStatus, onExit }: Props) {
 
       {/* Action Notification */}
       {actionMsg && (
-        <div style={{ background: '#064e3b', color: '#6ee7b7', padding: '8px 24px', fontSize: 11, fontWeight: 700, textAlign: 'center' }}>
+        <div style={{ background: '#064E3B', color: '#A7F3D0', padding: '6px 20px', fontSize: 10, fontWeight: 700, textAlign: 'center' }}>
           ✓ {actionMsg}
         </div>
       )}
 
       {/* ── Main Authority Body with Navigation ── */}
       <div style={{ display: 'flex', flex: 1, overflow: 'hidden' }}>
-        {/* Navigation Sidebar */}
+        {/* Tactical Navigation Sidebar */}
         <nav
           style={{
-            width: 220,
-            background: 'linear-gradient(180deg, #020712, #040c18)',
-            borderRight: '1px solid rgba(255, 180, 68, 0.15)',
+            width: 200,
+            background: 'var(--bg-surface)',
+            borderRight: '1px solid var(--border)',
             display: 'flex',
             flexDirection: 'column',
-            padding: '16px 12px',
-            gap: 6,
+            padding: '12px 8px',
+            gap: 4,
             flexShrink: 0,
           }}
         >
-          <div style={{ fontSize: 9, fontWeight: 800, color: 'var(--text-dim)', letterSpacing: '0.15em', padding: '6px 12px' }}>
-            COMMAND SECTIONS
+          <div style={{ fontSize: 8, fontWeight: 800, color: 'var(--text-dim)', letterSpacing: '0.1em', padding: '4px 8px' }}>
+            COMMAND DIRECTORY
           </div>
           {[
-            { id: 'overview', icon: '📊', label: 'Overview & Posture' },
+            { id: 'overview', icon: '📊', label: 'Executive Posture' },
             { id: 'incidents', icon: '🚨', label: 'Incident Center', count: activeIncidentsCount },
             { id: 'cameras', icon: '🎥', label: 'Camera Network', count: activeCamerasCount },
             { id: 'evidence', icon: '📁', label: 'Evidence Vault', count: evidenceList.length },
-            { id: 'health', icon: '⚡', label: 'System & AI Health' },
+            { id: 'health', icon: '⚡', label: 'Subsystem Health' },
             { id: 'audit', icon: '📜', label: 'Security Audit Log' },
           ].map((item) => {
             const active = tab === item.id;
@@ -385,31 +383,31 @@ export function AuthorityPortal({ user, msg, wsStatus, onExit }: Props) {
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  gap: 10,
-                  padding: '10px 14px',
-                  borderRadius: 8,
-                  border: active ? '1px solid rgba(255, 180, 68, 0.4)' : '1px solid transparent',
-                  background: active ? 'rgba(255, 180, 68, 0.12)' : 'transparent',
-                  color: active ? '#ffb444' : 'var(--text-secondary)',
-                  fontSize: 12,
+                  gap: 8,
+                  padding: '8px 10px',
+                  borderRadius: 6,
+                  border: active ? '1px solid var(--border-light)' : '1px solid transparent',
+                  background: active ? 'var(--bg-hover)' : 'transparent',
+                  color: active ? '#F8FAFC' : 'var(--text-muted)',
+                  fontSize: 11,
                   fontWeight: active ? 800 : 600,
-                  letterSpacing: '0.04em',
+                  letterSpacing: '0.02em',
                   cursor: 'pointer',
                   textAlign: 'left',
                   transition: 'all 0.15s',
                 }}
               >
-                <span style={{ fontSize: 16 }}>{item.icon}</span>
+                <span style={{ fontSize: 14 }}>{item.icon}</span>
                 <span style={{ flex: 1 }}>{item.label}</span>
                 {item.count !== undefined && item.count > 0 && (
                   <span
                     style={{
-                      background: active ? '#ffb444' : 'rgba(255,255,255,0.1)',
-                      color: active ? '#000' : '#fff',
-                      fontSize: 9,
+                      background: active ? '#2563EB' : 'rgba(255,255,255,0.08)',
+                      color: '#FFFFFF',
+                      fontSize: 8,
                       fontWeight: 800,
-                      borderRadius: 99,
-                      padding: '1px 6px',
+                      borderRadius: 4,
+                      padding: '1px 5px',
                     }}
                   >
                     {item.count}
@@ -419,78 +417,80 @@ export function AuthorityPortal({ user, msg, wsStatus, onExit }: Props) {
             );
           })}
 
-          <div style={{ marginTop: 'auto', padding: '12px', background: 'rgba(0,0,0,0.3)', borderRadius: 8, border: '1px solid rgba(255,180,68,0.1)' }}>
-            <div style={{ fontSize: 9, color: 'var(--text-dim)', letterSpacing: '0.1em' }}>CLEARANCE LEVEL</div>
-            <div style={{ fontSize: 11, fontWeight: 800, color: '#ffb444', marginTop: 2 }}>{user.department}</div>
-            <div style={{ fontSize: 9, color: 'var(--text-muted)', marginTop: 4 }}>ID: {user.badge}</div>
+          <div style={{ marginTop: 'auto', padding: '10px', background: 'var(--bg-panel)', borderRadius: 6, border: '1px solid var(--border)' }}>
+            <div style={{ fontSize: 8, color: 'var(--text-dim)', letterSpacing: '0.08em', fontWeight: 700 }}>COMMAND CLEARANCE</div>
+            <div style={{ fontSize: 10, fontWeight: 800, color: '#FBBF24', marginTop: 2 }}>{user.department}</div>
+            <div style={{ fontSize: 8, color: 'var(--text-muted)', marginTop: 2 }}>BADGE: {user.badge}</div>
           </div>
         </nav>
 
         {/* Content Area */}
-        <main style={{ flex: 1, overflowY: 'auto', background: 'var(--bg-base)', padding: '20px 24px' }}>
+        <main style={{ flex: 1, overflowY: 'auto', background: 'var(--bg-base)', padding: '16px 20px' }}>
           {/* ══════════ 1. OVERVIEW & POSTURE TAB ══════════ */}
           {tab === 'overview' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               {/* Telemetry Stat Row */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 12 }}>
-                <div className="panel panel-glow" style={{ padding: 14 }}>
-                  <div style={{ fontSize: 9, color: 'var(--text-dim)', letterSpacing: '0.12em', fontWeight: 700 }}>ACTIVE CAMERAS</div>
-                  <div style={{ fontSize: 24, fontWeight: 900, color: '#00ff88', marginTop: 4 }}>{activeCamerasCount} / {cameras.length}</div>
-                  <div style={{ fontSize: 9, color: 'var(--text-muted)', marginTop: 2 }}>Real-time RTSP/Webcam</div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 10 }}>
+                <div className="stat-card">
+                  <div style={{ fontSize: 8, color: 'var(--text-dim)', letterSpacing: '0.08em', fontWeight: 800 }}>ACTIVE CHANNELS</div>
+                  <div style={{ fontSize: 20, fontWeight: 900, color: '#10B981', marginTop: 3, fontFamily: "'JetBrains Mono', monospace" }}>
+                    {activeCamerasCount} / {cameras.length}
+                  </div>
+                  <div style={{ fontSize: 8, color: 'var(--text-muted)', marginTop: 2 }}>Surveillance Matrix</div>
                 </div>
 
-                <div className="panel panel-glow" style={{ padding: 14 }}>
-                  <div style={{ fontSize: 9, color: 'var(--text-dim)', letterSpacing: '0.12em', fontWeight: 700 }}>ACTIVE INCIDENTS</div>
-                  <div style={{ fontSize: 24, fontWeight: 900, color: activeIncidentsCount > 0 ? '#ff3b5c' : '#00ff88', marginTop: 4 }}>
+                <div className="stat-card">
+                  <div style={{ fontSize: 8, color: 'var(--text-dim)', letterSpacing: '0.08em', fontWeight: 800 }}>ACTIVE INCIDENTS</div>
+                  <div style={{ fontSize: 20, fontWeight: 900, color: activeIncidentsCount > 0 ? '#EF4444' : '#10B981', marginTop: 3, fontFamily: "'JetBrains Mono', monospace" }}>
                     {activeIncidentsCount}
                   </div>
-                  <div style={{ fontSize: 9, color: 'var(--text-muted)', marginTop: 2 }}>{criticalCount} Critical Threats</div>
+                  <div style={{ fontSize: 8, color: 'var(--text-muted)', marginTop: 2 }}>{criticalCount} Critical Priority</div>
                 </div>
 
-                <div className="panel panel-glow" style={{ padding: 14 }}>
-                  <div style={{ fontSize: 9, color: 'var(--text-dim)', letterSpacing: '0.12em', fontWeight: 700 }}>TRACKED SUBJECTS</div>
-                  <div style={{ fontSize: 24, fontWeight: 900, color: 'var(--accent-cyan)', marginTop: 4 }}>
+                <div className="stat-card">
+                  <div style={{ fontSize: 8, color: 'var(--text-dim)', letterSpacing: '0.08em', fontWeight: 800 }}>TRACKED SUBJECTS</div>
+                  <div style={{ fontSize: 20, fontWeight: 900, color: '#60A5FA', marginTop: 3, fontFamily: "'JetBrains Mono', monospace" }}>
                     {msg?.counts?.tracked ?? 0}
                   </div>
-                  <div style={{ fontSize: 9, color: 'var(--text-muted)', marginTop: 2 }}>Kalman Trackers Active</div>
+                  <div style={{ fontSize: 8, color: 'var(--text-muted)', marginTop: 2 }}>Kalman Filters Active</div>
                 </div>
 
-                <div className="panel panel-glow" style={{ padding: 14 }}>
-                  <div style={{ fontSize: 9, color: 'var(--text-dim)', letterSpacing: '0.12em', fontWeight: 700 }}>PEOPLE IN PERIMETER</div>
-                  <div style={{ fontSize: 24, fontWeight: 900, color: 'var(--accent-blue)', marginTop: 4 }}>
+                <div className="stat-card">
+                  <div style={{ fontSize: 8, color: 'var(--text-dim)', letterSpacing: '0.08em', fontWeight: 800 }}>PERSONNEL IN SCENE</div>
+                  <div style={{ fontSize: 20, fontWeight: 900, color: '#93C5FD', marginTop: 3, fontFamily: "'JetBrains Mono', monospace" }}>
                     {msg?.counts?.person ?? 0}
                   </div>
-                  <div style={{ fontSize: 9, color: 'var(--text-muted)', marginTop: 2 }}>YOLOv8 + Face Verified</div>
+                  <div style={{ fontSize: 8, color: 'var(--text-muted)', marginTop: 2 }}>Body & Face Fusion</div>
                 </div>
 
-                <div className="panel panel-glow" style={{ padding: 14 }}>
-                  <div style={{ fontSize: 9, color: 'var(--text-dim)', letterSpacing: '0.12em', fontWeight: 700 }}>WEAPONS DETECTED</div>
-                  <div style={{ fontSize: 24, fontWeight: 900, color: (msg?.counts?.weapon ?? 0) > 0 ? '#ff3b5c' : '#3d6080', marginTop: 4 }}>
+                <div className="stat-card">
+                  <div style={{ fontSize: 8, color: 'var(--text-dim)', letterSpacing: '0.08em', fontWeight: 800 }}>FIREARMS DETECTED</div>
+                  <div style={{ fontSize: 20, fontWeight: 900, color: (msg?.counts?.weapon ?? 0) > 0 ? '#EF4444' : '#64748B', marginTop: 3, fontFamily: "'JetBrains Mono', monospace" }}>
                     {msg?.counts?.weapon ?? 0}
                   </div>
-                  <div style={{ fontSize: 9, color: 'var(--text-muted)', marginTop: 2 }}>Firearm AI Model</div>
+                  <div style={{ fontSize: 8, color: 'var(--text-muted)', marginTop: 2 }}>Firearm AI Model</div>
                 </div>
 
-                <div className="panel panel-glow" style={{ padding: 14 }}>
-                  <div style={{ fontSize: 9, color: 'var(--text-dim)', letterSpacing: '0.12em', fontWeight: 700 }}>OPERATIONAL THREAT</div>
-                  <div style={{ fontSize: 24, fontWeight: 900, color: msg?.risk_score && msg.risk_score >= 80 ? '#ff3b5c' : '#ffb444', marginTop: 4 }}>
+                <div className="stat-card">
+                  <div style={{ fontSize: 8, color: 'var(--text-dim)', letterSpacing: '0.08em', fontWeight: 800 }}>OPERATIONAL THREAT</div>
+                  <div style={{ fontSize: 20, fontWeight: 900, color: msg?.risk_score && msg.risk_score >= 80 ? '#EF4444' : '#F59E0B', marginTop: 3, fontFamily: "'JetBrains Mono', monospace" }}>
                     {msg?.risk_score ?? 0} / 100
                   </div>
-                  <div style={{ fontSize: 9, color: 'var(--text-muted)', marginTop: 2 }}>{msg?.risk_level ?? 'INFO'}</div>
+                  <div style={{ fontSize: 8, color: 'var(--text-muted)', marginTop: 2 }}>Level: {msg?.risk_level ?? 'INFO'}</div>
                 </div>
               </div>
 
               {/* 2-Column Command View */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: 16 }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: 14 }}>
                 {/* Live Surveillance Preview */}
                 <div className="panel panel-glow">
                   <div className="panel-header">
                     <div className="panel-header-icon">🎥</div>
-                    LIVE AGENCY SURVEILLANCE FEED · CAMERA_001
-                    <span className="badge badge-green" style={{ marginLeft: 'auto' }}>● LIVE STREAM</span>
+                    LIVE AGENCY SURVEILLANCE FEED · CHANNEL 01
+                    <span className="badge badge-green" style={{ marginLeft: 'auto' }}>● FEED ACTIVE</span>
                   </div>
-                  <div style={{ padding: 12 }}>
-                    <div style={{ position: 'relative', background: '#000', borderRadius: 8, overflow: 'hidden', minHeight: 320 }}>
+                  <div style={{ padding: 10 }}>
+                    <div style={{ position: 'relative', background: '#000', borderRadius: 6, overflow: 'hidden', minHeight: 320 }}>
                       <img src={STREAM_URL} style={{ width: '100%', display: 'block', minHeight: 320, objectFit: 'contain' }} alt="Live Camera" />
                       <div className="scanline-overlay" />
                     </div>
@@ -501,39 +501,39 @@ export function AuthorityPortal({ user, msg, wsStatus, onExit }: Props) {
                 <div className="panel panel-glow" style={{ display: 'flex', flexDirection: 'column' }}>
                   <div className="panel-header">
                     <div className="panel-header-icon">🚨</div>
-                    RECENT CRITICAL INCIDENTS
-                    <span style={{ marginLeft: 'auto', fontSize: 10, color: 'var(--text-muted)' }}>{incidents.length} TOTAL</span>
+                    RECENT SECURITY INCIDENTS
+                    <span style={{ marginLeft: 'auto', fontSize: 9, color: 'var(--text-muted)', fontWeight: 700 }}>{incidents.length} RECORDED</span>
                   </div>
-                  <div style={{ padding: 12, display: 'flex', flexDirection: 'column', gap: 10, flex: 1, overflowY: 'auto', maxHeight: 360 }}>
+                  <div style={{ padding: 10, display: 'flex', flexDirection: 'column', gap: 8, flex: 1, overflowY: 'auto', maxHeight: 360 }}>
                     {incidents.length === 0 ? (
-                      <div style={{ padding: 30, textAlign: 'center', color: 'var(--text-dim)', fontSize: 12 }}>
-                        No active security incidents recorded.
+                      <div style={{ padding: 28, textAlign: 'center', color: 'var(--text-dim)', fontSize: 11 }}>
+                        No active security incidents recorded in this session.
                       </div>
                     ) : (
                       incidents.slice(0, 5).map((inc) => (
                         <div
                           key={inc.event_id}
                           style={{
-                            background: 'rgba(7, 16, 30, 0.8)',
-                            border: '1px solid rgba(56, 182, 255, 0.15)',
-                            borderRadius: 8,
-                            padding: 12,
+                            background: 'var(--bg-card)',
+                            border: '1px solid var(--border)',
+                            borderRadius: 6,
+                            padding: 10,
                             display: 'flex',
                             flexDirection: 'column',
-                            gap: 6,
+                            gap: 5,
                           }}
                         >
                           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                            <span style={{ fontSize: 11, fontWeight: 800, color: '#fff' }}>{inc.event_type}</span>
-                            <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                            <span style={{ fontSize: 11, fontWeight: 800, color: '#F8FAFC' }}>{inc.event_type}</span>
+                            <div style={{ display: 'flex', gap: 5, alignItems: 'center' }}>
                               {sevBadge(inc.severity)}
                               {statusBadge(inc.status)}
                             </div>
                           </div>
                           <div style={{ fontSize: 10, color: 'var(--text-secondary)' }}>{inc.description}</div>
-                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 4 }}>
-                            <span style={{ fontSize: 9, color: 'var(--text-dim)', fontFamily: "'JetBrains Mono', monospace" }}>
-                              {inc.camera_id} · {inc.timestamp}
+                          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 3 }}>
+                            <span style={{ fontSize: 8, color: 'var(--text-dim)', fontFamily: "'JetBrains Mono', monospace" }}>
+                              {inc.camera_id} · {inc.timestamp.slice(11, 19)}
                             </span>
                             <button
                               onClick={() => {
@@ -541,11 +541,11 @@ export function AuthorityPortal({ user, msg, wsStatus, onExit }: Props) {
                                 setSelectedIncident(inc);
                               }}
                               style={{
-                                background: 'rgba(56, 182, 255, 0.15)',
-                                border: '1px solid rgba(56, 182, 255, 0.3)',
-                                color: 'var(--accent-cyan)',
+                                background: 'rgba(59, 130, 246, 0.15)',
+                                border: '1px solid rgba(59, 130, 246, 0.35)',
+                                color: '#93C5FD',
                                 borderRadius: 4,
-                                padding: '3px 8px',
+                                padding: '2px 8px',
                                 fontSize: 9,
                                 fontWeight: 700,
                                 cursor: 'pointer',
@@ -565,14 +565,14 @@ export function AuthorityPortal({ user, msg, wsStatus, onExit }: Props) {
 
           {/* ══════════ 2. INCIDENT MANAGEMENT CENTER ══════════ */}
           {tab === 'incidents' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               {/* Filter Controls */}
-              <div className="panel panel-glow" style={{ padding: '12px 18px', display: 'flex', gap: 14, alignItems: 'center' }}>
-                <span style={{ fontSize: 11, fontWeight: 800, color: '#ffb444', letterSpacing: '0.1em' }}>FILTER INCIDENTS:</span>
+              <div className="panel panel-glow" style={{ padding: '10px 14px', display: 'flex', gap: 10, alignItems: 'center' }}>
+                <span style={{ fontSize: 10, fontWeight: 800, color: '#FBBF24', letterSpacing: '0.06em' }}>FILTER INCIDENTS:</span>
                 <select
                   value={sevFilter}
                   onChange={(e) => setSevFilter(e.target.value)}
-                  style={{ background: 'rgba(10,25,47,0.8)', border: '1px solid rgba(56,182,255,0.25)', color: '#fff', borderRadius: 6, padding: '6px 10px', fontSize: 11 }}
+                  style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-light)', color: '#F8FAFC', borderRadius: 4, padding: '5px 8px', fontSize: 10 }}
                 >
                   <option value="">All Severities</option>
                   <option value="CRITICAL">CRITICAL</option>
@@ -584,7 +584,7 @@ export function AuthorityPortal({ user, msg, wsStatus, onExit }: Props) {
                 <select
                   value={statusFilter}
                   onChange={(e) => setStatusFilter(e.target.value)}
-                  style={{ background: 'rgba(10,25,47,0.8)', border: '1px solid rgba(56,182,255,0.25)', color: '#fff', borderRadius: 6, padding: '6px 10px', fontSize: 11 }}
+                  style={{ background: 'var(--bg-surface)', border: '1px solid var(--border-light)', color: '#F8FAFC', borderRadius: 4, padding: '5px 8px', fontSize: 10 }}
                 >
                   <option value="">All Statuses</option>
                   <option value="NEW">NEW</option>
@@ -594,7 +594,7 @@ export function AuthorityPortal({ user, msg, wsStatus, onExit }: Props) {
 
                 <button
                   onClick={loadData}
-                  style={{ marginLeft: 'auto', background: 'rgba(56,182,255,0.15)', border: '1px solid rgba(56,182,255,0.3)', color: '#fff', borderRadius: 6, padding: '6px 12px', fontSize: 10, fontWeight: 700, cursor: 'pointer' }}
+                  style={{ marginLeft: 'auto', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid var(--border-light)', color: '#FFFFFF', borderRadius: 4, padding: '5px 10px', fontSize: 10, fontWeight: 700, cursor: 'pointer' }}
                 >
                   ↻ Refresh
                 </button>
@@ -606,24 +606,24 @@ export function AuthorityPortal({ user, msg, wsStatus, onExit }: Props) {
                   <div className="panel-header-icon">🚨</div>
                   SECURITY INCIDENT DOSSIERS ({incidents.length})
                 </div>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 10 }}>
                   <thead>
-                    <tr style={{ background: 'rgba(7, 16, 30, 0.9)', borderBottom: '1px solid rgba(56, 182, 255, 0.15)', color: 'var(--text-dim)', textAlign: 'left' }}>
-                      <th style={{ padding: '10px 14px' }}>INCIDENT ID</th>
-                      <th style={{ padding: '10px 14px' }}>EVENT TYPE</th>
-                      <th style={{ padding: '10px 14px' }}>SEVERITY</th>
-                      <th style={{ padding: '10px 14px' }}>CAMERA</th>
-                      <th style={{ padding: '10px 14px' }}>TIMESTAMP</th>
-                      <th style={{ padding: '10px 14px' }}>OBJECT / TRACK</th>
-                      <th style={{ padding: '10px 14px' }}>STATUS</th>
-                      <th style={{ padding: '10px 14px' }}>EVIDENCE</th>
-                      <th style={{ padding: '10px 14px' }}>ACTIONS</th>
+                    <tr>
+                      <th>INCIDENT ID</th>
+                      <th>EVENT TYPE</th>
+                      <th>SEVERITY</th>
+                      <th>CHANNEL</th>
+                      <th>TIMESTAMP</th>
+                      <th>TARGET</th>
+                      <th>STATUS</th>
+                      <th>EVIDENCE</th>
+                      <th>ACTIONS</th>
                     </tr>
                   </thead>
                   <tbody>
                     {incidents.length === 0 ? (
                       <tr>
-                        <td colSpan={9} style={{ padding: 30, textAlign: 'center', color: 'var(--text-dim)' }}>
+                        <td colSpan={9} style={{ padding: 28, textAlign: 'center', color: 'var(--text-dim)' }}>
                           No incidents match the active filters.
                         </td>
                       </tr>
@@ -632,39 +632,38 @@ export function AuthorityPortal({ user, msg, wsStatus, onExit }: Props) {
                         <tr
                           key={inc.event_id}
                           style={{
-                            borderBottom: '1px solid rgba(56, 182, 255, 0.08)',
-                            background: selectedIncident?.event_id === inc.event_id ? 'rgba(56, 182, 255, 0.12)' : 'transparent',
+                            background: selectedIncident?.event_id === inc.event_id ? 'rgba(59, 130, 246, 0.1)' : 'transparent',
                           }}
                         >
-                          <td style={{ padding: '10px 14px', fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, color: 'var(--accent-cyan)' }}>
+                          <td style={{ fontFamily: "'JetBrains Mono', monospace", fontWeight: 700, color: '#3B82F6' }}>
                             {inc.event_id}
                           </td>
-                          <td style={{ padding: '10px 14px', fontWeight: 700, color: '#fff' }}>{inc.event_type}</td>
-                          <td style={{ padding: '10px 14px' }}>{sevBadge(inc.severity)}</td>
-                          <td style={{ padding: '10px 14px' }}>{inc.camera_id}</td>
-                          <td style={{ padding: '10px 14px', color: 'var(--text-secondary)' }}>{inc.timestamp}</td>
-                          <td style={{ padding: '10px 14px' }}>
+                          <td style={{ fontWeight: 700, color: '#F8FAFC' }}>{inc.event_type}</td>
+                          <td>{sevBadge(inc.severity)}</td>
+                          <td>{inc.camera_id}</td>
+                          <td style={{ color: 'var(--text-secondary)' }}>{inc.timestamp.slice(11, 19)}</td>
+                          <td>
                             {inc.object_type ? `${inc.object_type.toUpperCase()} #${inc.track_id ?? '?'}` : '—'}
                           </td>
-                          <td style={{ padding: '10px 14px' }}>{statusBadge(inc.status)}</td>
-                          <td style={{ padding: '10px 14px' }}>
+                          <td>{statusBadge(inc.status)}</td>
+                          <td>
                             {inc.evidence_path ? (
-                              <span style={{ color: '#00ff88', fontWeight: 700 }}>📷 Available</span>
+                              <span style={{ color: '#10B981', fontWeight: 700 }}>📷 Stored</span>
                             ) : (
                               <span style={{ color: 'var(--text-dim)' }}>None</span>
                             )}
                           </td>
-                          <td style={{ padding: '10px 14px', display: 'flex', gap: 6 }}>
+                          <td style={{ display: 'flex', gap: 5 }}>
                             <button
                               onClick={() => setSelectedIncident(inc)}
-                              style={{ background: 'rgba(56, 182, 255, 0.15)', border: '1px solid rgba(56, 182, 255, 0.3)', color: '#fff', borderRadius: 4, padding: '4px 8px', fontSize: 10, fontWeight: 700, cursor: 'pointer' }}
+                              style={{ background: 'rgba(59, 130, 246, 0.15)', border: '1px solid rgba(59, 130, 246, 0.35)', color: '#93C5FD', borderRadius: 4, padding: '3px 6px', fontSize: 9, fontWeight: 700, cursor: 'pointer' }}
                             >
                               Dossier
                             </button>
                             {inc.status === 'NEW' && (
                               <button
                                 onClick={() => handleAcknowledge(inc.event_id)}
-                                style={{ background: 'rgba(255, 180, 68, 0.15)', border: '1px solid rgba(255, 180, 68, 0.4)', color: '#ffb444', borderRadius: 4, padding: '4px 8px', fontSize: 10, fontWeight: 700, cursor: 'pointer' }}
+                                style={{ background: 'rgba(245, 158, 11, 0.15)', border: '1px solid rgba(245, 158, 11, 0.35)', color: '#FBBF24', borderRadius: 4, padding: '3px 6px', fontSize: 9, fontWeight: 700, cursor: 'pointer' }}
                               >
                                 Ack
                               </button>
@@ -675,7 +674,7 @@ export function AuthorityPortal({ user, msg, wsStatus, onExit }: Props) {
                                   setSelectedIncident(inc);
                                   setShowResolveModal(true);
                                 }}
-                                style={{ background: 'rgba(0, 255, 136, 0.15)', border: '1px solid rgba(0, 255, 136, 0.4)', color: '#00ff88', borderRadius: 4, padding: '4px 8px', fontSize: 10, fontWeight: 700, cursor: 'pointer' }}
+                                style={{ background: 'rgba(16, 185, 129, 0.15)', border: '1px solid rgba(16, 185, 129, 0.35)', color: '#34D399', borderRadius: 4, padding: '3px 6px', fontSize: 9, fontWeight: 700, cursor: 'pointer' }}
                               >
                                 Resolve
                               </button>
@@ -690,73 +689,73 @@ export function AuthorityPortal({ user, msg, wsStatus, onExit }: Props) {
 
               {/* Incident Dossier Detail Pane */}
               {selectedIncident && (
-                <div className="panel panel-glow" style={{ padding: 20, border: '1px solid rgba(56, 182, 255, 0.35)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
+                <div className="panel panel-glow" style={{ padding: 16 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 14 }}>
                     <div>
-                      <div style={{ fontSize: 16, fontWeight: 900, color: '#fff' }}>
+                      <div style={{ fontSize: 14, fontWeight: 900, color: '#F8FAFC' }}>
                         INCIDENT DOSSIER: {selectedIncident.event_id}
                       </div>
-                      <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>
-                        {selectedIncident.event_type} · Detected on {selectedIncident.camera_id} at {selectedIncident.timestamp}
+                      <div style={{ fontSize: 10, color: 'var(--text-muted)', marginTop: 2 }}>
+                        {selectedIncident.event_type} · Channel: {selectedIncident.camera_id} at {selectedIncident.timestamp}
                       </div>
                     </div>
-                    <div style={{ display: 'flex', gap: 8 }}>
+                    <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
                       {sevBadge(selectedIncident.severity)}
                       {statusBadge(selectedIncident.status)}
                       <button
                         onClick={() => setSelectedIncident(null)}
-                        style={{ background: 'transparent', border: 'none', color: 'var(--text-dim)', fontSize: 16, cursor: 'pointer', marginLeft: 8 }}
+                        style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', fontSize: 14, cursor: 'pointer', marginLeft: 6 }}
                       >
                         ✕
                       </button>
                     </div>
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 20 }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
                     {/* Left: Metadata */}
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 10, fontSize: 12 }}>
-                      <div style={{ background: 'rgba(0,0,0,0.3)', padding: 12, borderRadius: 8 }}>
-                        <div style={{ color: 'var(--text-dim)', fontSize: 10, fontWeight: 700 }}>DESCRIPTION</div>
-                        <div style={{ color: '#fff', marginTop: 4 }}>{selectedIncident.description}</div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 8, fontSize: 11 }}>
+                      <div style={{ background: 'var(--bg-surface)', padding: 10, borderRadius: 6, border: '1px solid var(--border)' }}>
+                        <div style={{ color: 'var(--text-dim)', fontSize: 9, fontWeight: 700 }}>TACTICAL DESCRIPTION</div>
+                        <div style={{ color: '#F8FAFC', marginTop: 3 }}>{selectedIncident.description}</div>
                       </div>
 
-                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-                        <div style={{ background: 'rgba(0,0,0,0.3)', padding: 10, borderRadius: 8 }}>
-                          <div style={{ color: 'var(--text-dim)', fontSize: 9 }}>ZONE</div>
-                          <div style={{ color: '#fff', fontWeight: 700 }}>{selectedIncident.zone_name || 'Restricted Zone'}</div>
+                      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                        <div style={{ background: 'var(--bg-surface)', padding: 8, borderRadius: 6, border: '1px solid var(--border)' }}>
+                          <div style={{ color: 'var(--text-dim)', fontSize: 8 }}>PERIMETER SECTOR</div>
+                          <div style={{ color: '#F8FAFC', fontWeight: 700 }}>{selectedIncident.zone_name || 'High Risk Sector'}</div>
                         </div>
-                        <div style={{ background: 'rgba(0,0,0,0.3)', padding: 10, borderRadius: 8 }}>
-                          <div style={{ color: 'var(--text-dim)', fontSize: 9 }}>RISK SCORE</div>
-                          <div style={{ color: '#ff3b5c', fontWeight: 900 }}>{selectedIncident.risk_score} / 100</div>
+                        <div style={{ background: 'var(--bg-surface)', padding: 8, borderRadius: 6, border: '1px solid var(--border)' }}>
+                          <div style={{ color: 'var(--text-dim)', fontSize: 8 }}>THREAT PRIORITY</div>
+                          <div style={{ color: '#EF4444', fontWeight: 900 }}>{selectedIncident.risk_score} / 100</div>
                         </div>
-                        <div style={{ background: 'rgba(0,0,0,0.3)', padding: 10, borderRadius: 8 }}>
-                          <div style={{ color: 'var(--text-dim)', fontSize: 9 }}>OBJECT CLASS</div>
-                          <div style={{ color: '#fff' }}>{selectedIncident.object_type || 'Unspecified'}</div>
+                        <div style={{ background: 'var(--bg-surface)', padding: 8, borderRadius: 6, border: '1px solid var(--border)' }}>
+                          <div style={{ color: 'var(--text-dim)', fontSize: 8 }}>TARGET CLASS</div>
+                          <div style={{ color: '#F8FAFC' }}>{selectedIncident.object_type || 'Unspecified'}</div>
                         </div>
-                        <div style={{ background: 'rgba(0,0,0,0.3)', padding: 10, borderRadius: 8 }}>
-                          <div style={{ color: 'var(--text-dim)', fontSize: 9 }}>TRACK ID</div>
-                          <div style={{ color: 'var(--accent-cyan)', fontFamily: "'JetBrains Mono', monospace" }}>
+                        <div style={{ background: 'var(--bg-surface)', padding: 8, borderRadius: 6, border: '1px solid var(--border)' }}>
+                          <div style={{ color: 'var(--text-dim)', fontSize: 8 }}>TRACK ID</div>
+                          <div style={{ color: '#3B82F6', fontFamily: "'JetBrains Mono', monospace" }}>
                             #{selectedIncident.track_id ?? 'N/A'}
                           </div>
                         </div>
                       </div>
 
                       {/* Audit Timeline */}
-                      <div style={{ background: 'rgba(0,0,0,0.3)', padding: 12, borderRadius: 8 }}>
-                        <div style={{ color: 'var(--text-dim)', fontSize: 10, fontWeight: 700, marginBottom: 6 }}>AUTHORITY LIFECYCLE</div>
-                        <div style={{ fontSize: 11, color: 'var(--text-secondary)' }}>
-                          • Created: {selectedIncident.timestamp}<br />
+                      <div style={{ background: 'var(--bg-surface)', padding: 10, borderRadius: 6, border: '1px solid var(--border)' }}>
+                        <div style={{ color: 'var(--text-dim)', fontSize: 9, fontWeight: 700, marginBottom: 4 }}>AUTHORITY AUDIT TRAIL</div>
+                        <div style={{ fontSize: 10, color: 'var(--text-secondary)' }}>
+                          • Recorded at: {selectedIncident.timestamp}<br />
                           {selectedIncident.acknowledged_by && (
-                            <>• Acknowledged by: {selectedIncident.acknowledged_by} ({selectedIncident.acknowledged_at})<br /></>
+                            <>• Acknowledged by: {selectedIncident.acknowledged_by} ({selectedIncident.acknowledged_at?.slice(11, 19)})<br /></>
                           )}
                           {selectedIncident.resolved_by && (
-                            <>• Resolved by: {selectedIncident.resolved_by} ({selectedIncident.resolved_at}) — <em>{selectedIncident.resolution_notes}</em><br /></>
+                            <>• Resolved by: {selectedIncident.resolved_by} ({selectedIncident.resolved_at?.slice(11, 19)}) — <em>{selectedIncident.resolution_notes}</em><br /></>
                           )}
                         </div>
                       </div>
 
                       {/* Actions */}
-                      <div style={{ display: 'flex', gap: 10, marginTop: 6 }}>
+                      <div style={{ display: 'flex', gap: 8, marginTop: 4 }}>
                         {selectedIncident.status === 'NEW' && (
                           <button
                             onClick={() => handleAcknowledge(selectedIncident.event_id)}
@@ -769,7 +768,8 @@ export function AuthorityPortal({ user, msg, wsStatus, onExit }: Props) {
                         {selectedIncident.status !== 'RESOLVED' && (
                           <button
                             onClick={() => setShowResolveModal(true)}
-                            style={{ flex: 1, background: '#059669', border: '1px solid #34d399', color: '#fff', borderRadius: 8, padding: '8px 16px', fontWeight: 800, cursor: 'pointer' }}
+                            className="btn btn-green"
+                            style={{ flex: 1 }}
                           >
                             ✓ RESOLVE INCIDENT
                           </button>
@@ -779,11 +779,11 @@ export function AuthorityPortal({ user, msg, wsStatus, onExit }: Props) {
 
                     {/* Right: Real Evidence Image */}
                     <div>
-                      <div style={{ color: 'var(--text-dim)', fontSize: 10, fontWeight: 700, marginBottom: 6 }}>
-                        VERIFIED EVIDENCE SNAPSHOT
+                      <div style={{ color: 'var(--text-dim)', fontSize: 9, fontWeight: 700, marginBottom: 5 }}>
+                        STORED EVIDENCE SNAPSHOT
                       </div>
                       {selectedIncident.evidence_path ? (
-                        <div style={{ border: '1px solid rgba(56, 182, 255, 0.3)', borderRadius: 8, overflow: 'hidden', background: '#000' }}>
+                        <div style={{ border: '1px solid var(--border)', borderRadius: 6, overflow: 'hidden', background: '#000' }}>
                           <img
                             src={selectedIncident.evidence_path}
                             alt="Evidence Snapshot"
@@ -793,20 +793,20 @@ export function AuthorityPortal({ user, msg, wsStatus, onExit }: Props) {
                       ) : (
                         <div
                           style={{
-                            height: 220,
-                            background: 'rgba(0,0,0,0.4)',
-                            border: '1px dashed rgba(56, 182, 255, 0.2)',
-                            borderRadius: 8,
+                            height: 200,
+                            background: 'var(--bg-surface)',
+                            border: '1px dashed var(--border-light)',
+                            borderRadius: 6,
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
                             flexDirection: 'column',
-                            gap: 8,
+                            gap: 6,
                             color: 'var(--text-dim)',
                           }}
                         >
-                          <div style={{ fontSize: 32 }}>📷</div>
-                          <div style={{ fontSize: 11 }}>Evidence image captured at trigger</div>
+                          <div style={{ fontSize: 24 }}>📷</div>
+                          <div style={{ fontSize: 10 }}>Evidence snapshot stored at trigger</div>
                         </div>
                       )}
                     </div>
@@ -818,48 +818,48 @@ export function AuthorityPortal({ user, msg, wsStatus, onExit }: Props) {
 
           {/* ══════════ 3. CAMERA NETWORK MATRIX TAB ══════════ */}
           {tab === 'cameras' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               <div className="panel panel-glow">
                 <div className="panel-header">
                   <div className="panel-header-icon">🎥</div>
-                  BORDER SURVEILLANCE CAMERA MATRIX ({cameras.length} CHANNELS)
+                  PERIMETER SURVEILLANCE CHANNELS ({cameras.length} ACTIVE)
                 </div>
-                <div style={{ padding: 16, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: 16 }}>
+                <div style={{ padding: 14, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 14 }}>
                   {cameras.map((cam) => {
                     const isOnline = cam.status === 'online';
                     return (
                       <div
                         key={cam.id}
                         style={{
-                          background: 'rgba(7, 16, 30, 0.9)',
-                          border: `1px solid ${isOnline ? 'rgba(0,255,136,0.3)' : 'rgba(255,59,92,0.3)'}`,
-                          borderRadius: 10,
+                          background: 'var(--bg-card)',
+                          border: `1px solid ${isOnline ? 'rgba(16,185,129,0.3)' : 'var(--border)'}`,
+                          borderRadius: 8,
                           overflow: 'hidden',
                         }}
                       >
-                        <div style={{ padding: '10px 14px', background: 'rgba(0,0,0,0.4)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div style={{ padding: '8px 12px', background: 'var(--bg-surface)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                           <div>
-                            <span style={{ fontSize: 12, fontWeight: 800, color: '#fff' }}>{cam.name}</span>
-                            <div style={{ fontSize: 9, color: 'var(--text-muted)' }}>{cam.location}</div>
+                            <span style={{ fontSize: 11, fontWeight: 800, color: '#F8FAFC' }}>{cam.name}</span>
+                            <div style={{ fontSize: 8, color: 'var(--text-muted)' }}>{cam.location}</div>
                           </div>
-                          <span className={isOnline ? 'badge badge-green' : 'badge badge-red'}>
-                            {isOnline ? '● ONLINE' : '● OFFLINE'}
+                          <span className={isOnline ? 'badge badge-green' : 'badge badge-gray'}>
+                            {isOnline ? '● ONLINE' : '● STANDBY'}
                           </span>
                         </div>
 
                         {/* Stream preview */}
-                        <div style={{ height: 200, background: '#000', position: 'relative' }}>
+                        <div style={{ height: 180, background: '#000', position: 'relative' }}>
                           {isOnline ? (
                             <img src={STREAM_URL} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt={cam.name} />
                           ) : (
                             <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 6, color: 'var(--text-dim)' }}>
-                              <div style={{ fontSize: 24 }}>📡</div>
-                              <div style={{ fontSize: 10, letterSpacing: '0.1em' }}>CHANNEL STANDBY</div>
+                              <div style={{ fontSize: 20 }}>📡</div>
+                              <div style={{ fontSize: 9, letterSpacing: '0.08em' }}>CHANNEL STANDBY</div>
                             </div>
                           )}
                         </div>
 
-                        <div style={{ padding: '10px 14px', fontSize: 10, color: 'var(--text-secondary)', display: 'flex', justifyContent: 'space-between' }}>
+                        <div style={{ padding: '8px 12px', fontSize: 9, color: 'var(--text-secondary)', display: 'flex', justifyContent: 'space-between' }}>
                           <span>FPS: {isOnline ? (msg?.fps ?? 0) : '0'}</span>
                           <span>Source: {cam.source}</span>
                         </div>
@@ -873,39 +873,39 @@ export function AuthorityPortal({ user, msg, wsStatus, onExit }: Props) {
 
           {/* ══════════ 4. EVIDENCE VAULT TAB ══════════ */}
           {tab === 'evidence' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               <div className="panel panel-glow">
                 <div className="panel-header">
                   <div className="panel-header-icon">📁</div>
-                  OFFICIAL EVIDENCE REPOSITORY ({evidenceList.length} RECORDED FILES)
+                  OFFICIAL EVIDENCE ARCHIVE ({evidenceList.length} RECORDED FILES)
                 </div>
-                <div style={{ padding: 16 }}>
+                <div style={{ padding: 14 }}>
                   {evidenceList.length === 0 ? (
-                    <div style={{ padding: 40, textAlign: 'center', color: 'var(--text-dim)', fontSize: 12 }}>
+                    <div style={{ padding: 32, textAlign: 'center', color: 'var(--text-dim)', fontSize: 11 }}>
                       No stored evidence snapshots found on disk. Snapshots are automatically saved when high-severity events occur.
                     </div>
                   ) : (
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: 16 }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 12 }}>
                       {evidenceList.map((ev) => (
                         <div
                           key={ev.filename}
                           style={{
-                            background: 'rgba(7, 16, 30, 0.8)',
-                            border: '1px solid rgba(56, 182, 255, 0.2)',
-                            borderRadius: 8,
+                            background: 'var(--bg-card)',
+                            border: '1px solid var(--border)',
+                            borderRadius: 6,
                             overflow: 'hidden',
                           }}
                         >
                           <img
                             src={ev.path}
                             alt={ev.filename}
-                            style={{ width: '100%', height: 150, objectFit: 'cover', display: 'block' }}
+                            style={{ width: '100%', height: 140, objectFit: 'cover', display: 'block' }}
                           />
-                          <div style={{ padding: 10 }}>
-                            <div style={{ fontSize: 10, fontWeight: 700, color: '#fff', wordBreak: 'break-all' }}>
+                          <div style={{ padding: 8 }}>
+                            <div style={{ fontSize: 9, fontWeight: 700, color: '#F8FAFC', wordBreak: 'break-all' }}>
                               {ev.filename}
                             </div>
-                            <div style={{ fontSize: 9, color: 'var(--text-dim)', marginTop: 4 }}>
+                            <div style={{ fontSize: 8, color: 'var(--text-dim)', marginTop: 3 }}>
                               Size: {(ev.size_bytes / 1024).toFixed(1)} KB | {ev.modified.slice(0, 19)}
                             </div>
                           </div>
@@ -920,33 +920,33 @@ export function AuthorityPortal({ user, msg, wsStatus, onExit }: Props) {
 
           {/* ══════════ 5. SYSTEM & AI HEALTH TAB ══════════ */}
           {tab === 'health' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               <div className="panel panel-glow">
                 <div className="panel-header">
                   <div className="panel-header-icon">⚡</div>
-                  SUBSYSTEM OPERATIONAL DIAGNOSTICS
+                  SUBSYSTEM OPERATIONAL STATUS
                 </div>
-                <div style={{ padding: 20, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16 }}>
+                <div style={{ padding: 16, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 12 }}>
                   {health &&
                     Object.entries(health.subsystems).map(([name, data]: any) => (
                       <div
                         key={name}
                         style={{
-                          background: 'rgba(7, 16, 30, 0.8)',
-                          border: '1px solid rgba(56, 182, 255, 0.2)',
-                          borderRadius: 8,
-                          padding: 16,
+                          background: 'var(--bg-card)',
+                          border: '1px solid var(--border)',
+                          borderRadius: 6,
+                          padding: 14,
                         }}
                       >
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <span style={{ fontSize: 12, fontWeight: 800, color: '#fff' }}>
+                          <span style={{ fontSize: 11, fontWeight: 800, color: '#F8FAFC' }}>
                             {name.replace('_', ' ').toUpperCase()}
                           </span>
-                          <span className={data.status === 'ACTIVE' ? 'badge badge-green' : 'badge badge-red'}>
+                          <span className={data.status === 'ACTIVE' ? 'badge badge-green' : 'badge badge-gray'}>
                             ● {data.status}
                           </span>
                         </div>
-                        <div style={{ fontSize: 10, color: 'var(--text-secondary)', marginTop: 8 }}>
+                        <div style={{ fontSize: 9, color: 'var(--text-secondary)', marginTop: 6 }}>
                           {Object.entries(data)
                             .filter(([k]) => k !== 'status')
                             .map(([k, v]) => (
@@ -964,39 +964,39 @@ export function AuthorityPortal({ user, msg, wsStatus, onExit }: Props) {
 
           {/* ══════════ 6. SECURITY AUDIT LOG TAB ══════════ */}
           {tab === 'audit' && (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
               <div className="panel panel-glow">
                 <div className="panel-header">
                   <div className="panel-header-icon">📜</div>
                   HIGHER AUTHORITY SECURITY AUDIT TRAIL ({auditLogs.length} ENTRIES)
                 </div>
-                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 11 }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 10 }}>
                   <thead>
-                    <tr style={{ background: 'rgba(7, 16, 30, 0.9)', borderBottom: '1px solid rgba(56, 182, 255, 0.15)', color: 'var(--text-dim)', textAlign: 'left' }}>
-                      <th style={{ padding: '10px 14px' }}>TIMESTAMP</th>
-                      <th style={{ padding: '10px 14px' }}>ACTOR</th>
-                      <th style={{ padding: '10px 14px' }}>CLEARANCE</th>
-                      <th style={{ padding: '10px 14px' }}>ACTION</th>
-                      <th style={{ padding: '10px 14px' }}>TARGET ID</th>
-                      <th style={{ padding: '10px 14px' }}>DETAILS</th>
+                    <tr>
+                      <th>TIMESTAMP</th>
+                      <th>ACTOR</th>
+                      <th>CLEARANCE</th>
+                      <th>ACTION</th>
+                      <th>TARGET ID</th>
+                      <th>DETAILS</th>
                     </tr>
                   </thead>
                   <tbody>
                     {auditLogs.length === 0 ? (
                       <tr>
-                        <td colSpan={6} style={{ padding: 30, textAlign: 'center', color: 'var(--text-dim)' }}>
+                        <td colSpan={6} style={{ padding: 28, textAlign: 'center', color: 'var(--text-dim)' }}>
                           No audit log entries recorded.
                         </td>
                       </tr>
                     ) : (
                       auditLogs.map((log) => (
-                        <tr key={log.id} style={{ borderBottom: '1px solid rgba(56, 182, 255, 0.08)' }}>
-                          <td style={{ padding: '10px 14px', color: 'var(--text-secondary)' }}>{log.timestamp.slice(0, 19)}</td>
-                          <td style={{ padding: '10px 14px', fontWeight: 700, color: '#fff' }}>{log.actor}</td>
-                          <td style={{ padding: '10px 14px', color: '#ffb444' }}>{log.role}</td>
-                          <td style={{ padding: '10px 14px', fontWeight: 800, color: 'var(--accent-cyan)' }}>{log.action}</td>
-                          <td style={{ padding: '10px 14px', fontFamily: "'JetBrains Mono', monospace" }}>{log.target_id || '—'}</td>
-                          <td style={{ padding: '10px 14px', color: 'var(--text-secondary)' }}>{log.details}</td>
+                        <tr key={log.id}>
+                          <td style={{ color: 'var(--text-secondary)', fontFamily: "'JetBrains Mono', monospace" }}>{log.timestamp.slice(0, 19)}</td>
+                          <td style={{ fontWeight: 700, color: '#F8FAFC' }}>{log.actor}</td>
+                          <td style={{ color: '#FBBF24' }}>{log.role}</td>
+                          <td style={{ fontWeight: 800, color: '#3B82F6' }}>{log.action}</td>
+                          <td style={{ fontFamily: "'JetBrains Mono', monospace" }}>{log.target_id || '—'}</td>
+                          <td style={{ color: 'var(--text-secondary)' }}>{log.details}</td>
                         </tr>
                       ))
                     )}
@@ -1015,8 +1015,8 @@ export function AuthorityPortal({ user, msg, wsStatus, onExit }: Props) {
             position: 'fixed',
             inset: 0,
             zIndex: 9999,
-            background: 'rgba(2, 6, 14, 0.85)',
-            backdropFilter: 'blur(10px)',
+            background: 'rgba(8, 12, 20, 0.85)',
+            backdropFilter: 'blur(8px)',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -1024,52 +1024,54 @@ export function AuthorityPortal({ user, msg, wsStatus, onExit }: Props) {
           }}
         >
           <div
-            className="panel panel-glow"
+            className="panel"
             style={{
               width: '100%',
-              maxWidth: 440,
-              padding: 24,
-              borderRadius: 12,
-              background: '#07101e',
+              maxWidth: 420,
+              padding: 20,
+              borderRadius: 8,
+              background: 'var(--bg-panel)',
+              border: '1px solid var(--border-light)',
             }}
           >
-            <div style={{ fontSize: 15, fontWeight: 900, color: '#fff', marginBottom: 6 }}>
+            <div style={{ fontSize: 14, fontWeight: 900, color: '#F8FAFC', marginBottom: 4 }}>
               RESOLVE INCIDENT {selectedIncident.event_id}
             </div>
-            <div style={{ fontSize: 11, color: 'var(--text-muted)', marginBottom: 14 }}>
-              Record official resolution notes into the security audit ledger.
+            <div style={{ fontSize: 10, color: 'var(--text-muted)', marginBottom: 12 }}>
+              Record official mitigation notes into the security audit ledger.
             </div>
 
             <textarea
               value={resolveNotes}
               onChange={(e) => setResolveNotes(e.target.value)}
-              placeholder="e.g. Ground patrol dispatched. Perimeter verified and secured."
+              placeholder="e.g. Ground patrol dispatched. Sector verified and secured."
               rows={3}
               style={{
                 width: '100%',
-                background: 'rgba(10, 25, 47, 0.8)',
-                border: '1px solid rgba(56, 182, 255, 0.3)',
-                borderRadius: 8,
-                padding: 10,
-                color: '#fff',
-                fontSize: 12,
+                background: 'var(--bg-surface)',
+                border: '1px solid var(--border-light)',
+                borderRadius: 6,
+                padding: 8,
+                color: '#F8FAFC',
+                fontSize: 11,
                 outline: 'none',
                 boxSizing: 'border-box',
-                marginBottom: 14,
+                marginBottom: 12,
               }}
             />
 
-            <div style={{ display: 'flex', gap: 10 }}>
+            <div style={{ display: 'flex', gap: 8 }}>
               <button
                 onClick={() => setShowResolveModal(false)}
-                style={{ flex: 1, background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.2)', color: '#fff', borderRadius: 8, padding: '8px 14px', cursor: 'pointer' }}
+                style={{ flex: 1, background: 'rgba(255,255,255,0.05)', border: '1px solid var(--border-light)', color: '#FFFFFF', borderRadius: 6, padding: '8px 12px', fontSize: 11, cursor: 'pointer' }}
               >
                 Cancel
               </button>
               <button
                 onClick={() => handleResolve(selectedIncident.event_id)}
                 disabled={loading}
-                style={{ flex: 2, background: '#059669', border: '1px solid #34d399', color: '#fff', borderRadius: 8, padding: '8px 14px', fontWeight: 800, cursor: 'pointer' }}
+                className="btn btn-green"
+                style={{ flex: 2, fontSize: 11 }}
               >
                 {loading ? 'Submitting...' : 'CONFIRM RESOLUTION'}
               </button>
