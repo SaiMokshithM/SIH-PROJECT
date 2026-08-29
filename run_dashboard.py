@@ -22,10 +22,13 @@ if platform.system() == "Windows":
     except Exception:
         pass
 
+import os
+
 def main():
+    default_port = int(os.environ.get("PORT", 7860)) if os.environ.get("PORT") else 8000
     parser = argparse.ArgumentParser(description="AI Border Surveillance Dashboard")
     parser.add_argument("--host", default="0.0.0.0")
-    parser.add_argument("--port", type=int, default=8000)
+    parser.add_argument("--port", type=int, default=default_port)
     parser.add_argument("--camera", default=None, help="Camera index (e.g. 0) or RTSP URL")
     parser.add_argument("--video",  default=None, help="Path to video file")
     parser.add_argument("--auto-start", action="store_true", help="Auto-start webcam immediately on launch")
