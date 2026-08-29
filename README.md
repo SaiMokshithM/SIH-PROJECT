@@ -2,7 +2,7 @@
 title: Border Surveillance Command Center
 emoji: 🛡️
 colorFrom: blue
-colorTo: slate
+colorTo: indigo
 sdk: gradio
 app_file: app.py
 pinned: false
