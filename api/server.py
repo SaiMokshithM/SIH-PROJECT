@@ -525,17 +525,22 @@ async def start_video_processing(file: UploadFile = File(...)):
 # ── Serve Frontend ────────────────────────────────────────────────────────────
 
 frontend_dist = project_root / "frontend" / "dist"
-if frontend_dist.exists():
-    app.mount("/assets", StaticFiles(directory=str(frontend_dist / "assets")), name="assets")
+assets_dir = frontend_dist / "assets"
+assets_dir.mkdir(parents=True, exist_ok=True)
+app.mount("/assets", StaticFiles(directory=str(assets_dir)), name="assets")
 
-    @app.get("/", response_class=HTMLResponse)
-    async def serve_index():
-        index = frontend_dist / "index.html"
+@app.get("/", response_class=HTMLResponse)
+async def serve_index():
+    index = frontend_dist / "index.html"
+    if index.exists():
         return HTMLResponse(content=index.read_text(encoding="utf-8"))
+    return HTMLResponse("<h2>AI Border Surveillance Command Center is online.</h2>")
 
-    @app.get("/{full_path:path}", response_class=HTMLResponse)
-    async def serve_spa(full_path: str):
-        if full_path.startswith("api") or full_path == "ws":
-            raise HTTPException(404)
-        index = frontend_dist / "index.html"
+@app.get("/{full_path:path}", response_class=HTMLResponse)
+async def serve_spa(full_path: str):
+    if full_path.startswith("api") or full_path == "ws" or full_path == "docs" or full_path == "openapi.json":
+        raise HTTPException(404)
+    index = frontend_dist / "index.html"
+    if index.exists():
         return HTMLResponse(content=index.read_text(encoding="utf-8"))
+    return HTMLResponse("<h2>AI Border Surveillance Command Center is online.</h2>")
