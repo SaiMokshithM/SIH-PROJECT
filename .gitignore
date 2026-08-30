@@ -1,4 +1,4 @@
-﻿# Python
+# Python
 __pycache__/
 *.py[cod]
 *$py.class
@@ -12,7 +12,6 @@ ENV/
 # Node / React
 frontend/node_modules/
 .npm
-dist/
 
 # Logs & temporary outputs
 *.log
